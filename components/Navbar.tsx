@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ModeToggle } from "@/components/theme/mode-toggle";
 
 export default function Navbar() {
   return (
@@ -20,12 +21,15 @@ export default function Navbar() {
         <nav>
           <ul className="flex items-center gap-6">
             <li>
-              <Link 
-                href="/about" 
+              <Link
+                href="/about"
                 className="text-foreground/80 hover:text-foreground transition-colors"
               >
                 About
               </Link>
+            </li>
+            <li>
+              <ModeToggle />
             </li>
           </ul>
         </nav>
