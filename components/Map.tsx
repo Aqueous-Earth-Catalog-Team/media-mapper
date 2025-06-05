@@ -1,13 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import mapboxgl, { LngLatBoundsLike } from "mapbox-gl";
+import mapboxgl, { LngLatBoundsLike, LngLatLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { mockMediaPoints } from "@/lib/data/mock-locations";
+import { MediaPoint, mockMediaPoints } from "@/lib/data/mock-media";
+import { useRouter } from "next/navigation";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
-export default function Map() {
+const DEFAULT_CENTER = [-98.5795, 39.8283] as LngLatLike;
+const DEFAULT_ZOOM = 5;
+
+export default function Map({
+  selectedMediaPoint,
+}: {
+  selectedMediaPoint: MediaPoint | null;
+}) {
+  const router = useRouter();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -16,15 +25,24 @@ export default function Map() {
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
+    const center = selectedMediaPoint
+      ? ([
+          selectedMediaPoint.longitude,
+          selectedMediaPoint.latitude,
+        ] as LngLatLike)
+      : DEFAULT_CENTER;
+
+    const zoom = selectedMediaPoint ? 13 : DEFAULT_ZOOM;
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/standard",
-      center: [-98.5795, 39.8283], // United States center [lng, lat]
-      zoom: 5, // starting zoom
+      center,
+      zoom,
     });
 
     // Add navigation controls (zoom in/out and rotation)
-    map.current.addControl(new mapboxgl.NavigationControl(), "top-left");
+    map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     // Handle map load
     map.current.on("load", () => {
@@ -57,7 +75,7 @@ export default function Map() {
           id: point.id,
           title: point.title,
           description: point.description,
-          mediaType: point.mediaType,
+          mediaType: point.media_type,
         },
       })),
     };
@@ -81,10 +99,12 @@ export default function Map() {
       },
     });
 
-    // Fit to bounds
-    map.current.fitBounds(
-      geojson.features.map((f) => f.geometry.coordinates) as LngLatBoundsLike
-    );
+    // Fit to bounds if no media point is selected
+    if (!selectedMediaPoint) {
+      map.current.fitBounds(
+        geojson.features.map((f) => f.geometry.coordinates) as LngLatBoundsLike
+      );
+    }
 
     // Add click interaction
     map.current.on("click", "media-points-layer", (e) => {
@@ -92,19 +112,10 @@ export default function Map() {
 
       const feature = e.features[0];
       const props = feature.properties;
-      const coordinates = props?.coordinates;
+      // const coordinates = props?.coordinates;
 
       if (props && props.id) {
-        // Create a popup
-        new mapboxgl.Popup()
-          .setLngLat(coordinates)
-          .setHTML(
-            `
-            <h3 class="text-base font-semibold">${props.title}</h3>
-            <p class="text-sm">${props.description}</p>
-          `
-          )
-          .addTo(map.current!);
+        router.push(`?mediaPointId=${props.id}`);
       }
     });
 
@@ -132,7 +143,7 @@ export default function Map() {
         }
       }
     };
-  }, [isMapLoaded]);
+  }, [isMapLoaded, selectedMediaPoint, router]);
 
   return (
     <div className="w-full h-full relative">

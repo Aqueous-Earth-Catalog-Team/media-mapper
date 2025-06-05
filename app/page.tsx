@@ -1,28 +1,34 @@
 import Map from "@/components/map";
-import { LocationsList } from "@/components/locations-list";
-import { mockMediaPoints } from "@/lib/data/mock-locations";
+import { MediaPoint, mockMediaPoints } from "@/lib/data/mock-media";
+import { LocationDetails } from "@/components/location-details";
 
-export default function Home() {
+async function getMediaPoint(mediaPointId?: string): Promise<MediaPoint> {
+  if (!mediaPointId) {
+    return mockMediaPoints[Math.floor(Math.random() * mockMediaPoints.length)];
+  }
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockMediaPoints.find((point) => point.id === mediaPointId)!);
+    }, 1000);
+  });
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { mediaPointId?: string };
+}) {
+  const mediaPoint = await getMediaPoint(searchParams.mediaPointId);
+
   return (
     <div className="w-full h-full">
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
-        <div className="h-[400px] fixed top-[4rem] left-0 w-full">
-          <Map />
-        </div>
-        <div className="bg-background mt-[300px] z-10 relative rounded-t-3xl  shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] pt-2 pb-4">
-          <LocationsList locations={mockMediaPoints} />
-        </div>
-      </div>
-
       {/* Desktop Layout */}
-      <div className="hidden lg:flex h-[calc(100vh-4rem)]">
-        <div className="w-1/2 overflow-y-auto bg-background rounded-r-3xl p-4">
-          <LocationsList locations={mockMediaPoints} />
+      <div className="h-[calc(100vh-4rem)] relative">
+        <div className="absolute top-2 left-2 max-h-[calc(100vh-7rem)] rounded-xl overflow-y-auto w-[calc(100%-1rem)] shadow-2xl z-10 md:w-3/5 md:top-4 md:left-4 lg:top-10 lg:left-10 lg:w-1/2  xl:w-1/3">
+          <LocationDetails data={mediaPoint} />
         </div>
-        <div className="w-1/2">
-          <Map />
-        </div>
+        <Map selectedMediaPoint={mediaPoint} />
       </div>
     </div>
   );
