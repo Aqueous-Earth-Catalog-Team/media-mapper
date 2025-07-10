@@ -124,6 +124,12 @@ export function LocationDetails({ data }: LocationDetailsProps) {
         />
 
         <Metric
+          label="Natural Feature"
+          value={selectedMediaPoint?.natural_feature_name}
+          className="mt-4"
+        />
+
+        <Metric
           label="Subjects"
           value={selectedMediaPoint?.media?.subjects}
           className="mt-4"
