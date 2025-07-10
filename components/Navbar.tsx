@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/theme/mode-toggle";
+import InstructionsDialog from "@/components/instructions-dialog";
 import { cn } from "@/lib/utils";
 
 const BASE_CLASSNAMES =
@@ -55,6 +56,9 @@ export default function Navbar() {
               >
                 Table View
               </Link>
+            </li>
+            <li>
+              <InstructionsDialog />
             </li>
             <li className="ml-4">
               <ModeToggle />
