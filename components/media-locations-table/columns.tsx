@@ -1,0 +1,115 @@
+import Link from "next/link";
+import { ColumnDef } from "@tanstack/react-table";
+import { MediaLocation } from "@/lib/airtable/types";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight } from "lucide-react";
+import { SortableHeader } from "../sortable-header";
+
+export const formatLocation = (item: MediaLocation) => {
+  const parts = [item.city, item.region, item.country].filter(Boolean);
+  return parts.join(", ");
+};
+
+export const columns: ColumnDef<MediaLocation>[] = [
+  {
+    id: "mediaTitle",
+    accessorFn: (row) => row.media?.name,
+    header: ({ column }) => (
+      <SortableHeader column={column} title="Media Title" />
+    ),
+    cell: ({ row }) => (
+      <div className="font-medium">{row.original.media?.name}</div>
+    ),
+    size: 200,
+  },
+  {
+    id: "mediaType",
+    accessorFn: (row) => row.media?.media_type,
+    header: ({ column }) => <SortableHeader column={column} title="Type" />,
+    cell: ({ row }) => {
+      const mediaType = row.original.media?.media_type;
+      return mediaType ? (
+        <Badge variant="outline">{mediaType}</Badge>
+      ) : (
+        <span>-</span>
+      );
+    },
+  },
+  {
+    id: "director",
+    accessorFn: (row) => row.media?.director || "",
+    header: ({ column }) => <SortableHeader column={column} title="Director" />,
+    cell: ({ row }) => row.original.media?.director || "-",
+  },
+  {
+    id: "releaseYear",
+    accessorFn: (row) => row.media?.release_year || 0,
+    header: ({ column }) => <SortableHeader column={column} title="Year" />,
+    cell: ({ row }) => row.original.media?.release_year || "-",
+  },
+  {
+    id: "location",
+    accessorFn: (row) => formatLocation(row),
+    header: ({ column }) => <SortableHeader column={column} title="Location" />,
+    cell: ({ row }) => {
+      const location = formatLocation(row.original);
+      if (!location) return "-";
+
+      return (
+        <Link
+          href={`/?mediaPointId=${row.original.id}`}
+          className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors underline underline-offset-2"
+        >
+          <span>{location}</span>
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      );
+    },
+  },
+  {
+    id: "naturalFeature",
+    accessorFn: (row) => row.natural_feature_name || "",
+    header: ({ column }) => (
+      <SortableHeader column={column} title="Natural Feature" />
+    ),
+    cell: ({ row }) => row.original.natural_feature_name || "-",
+  },
+  {
+    id: "subjects",
+    accessorFn: (row) => row.media?.subjects?.join(", ") || "",
+    header: ({ column }) => <SortableHeader column={column} title="Subjects" />,
+    cell: ({ row }) => {
+      const subjects = row.original.media?.subjects;
+      if (!subjects?.length) return "-";
+
+      return (
+        <div className="flex flex-wrap gap-1">
+          {subjects.map((subject, index) => (
+            <Badge key={index} variant="secondary" className="text-xs">
+              {subject}
+            </Badge>
+          ))}
+        </div>
+      );
+    },
+  },
+  {
+    id: "language",
+    accessorFn: (row) => row.media?.language?.join(", ") || "",
+    header: ({ column }) => <SortableHeader column={column} title="Language" />,
+    cell: ({ row }) => {
+      const languages = row.original.media?.language;
+      if (!languages?.length) return "-";
+
+      return (
+        <div className="flex flex-wrap gap-1">
+          {languages.map((lang, index) => (
+            <Badge key={index} variant="secondary" className="text-xs">
+              {lang}
+            </Badge>
+          ))}
+        </div>
+      );
+    },
+  },
+];
