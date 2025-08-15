@@ -5,6 +5,7 @@ export default function Loading() {
     <div className="relative">
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8">
+          <h1 className="sr-only">Media Locations - Table View</h1>
           <h1 className="text-3xl font-bold mb-2">Media Locations</h1>
           <p className="text-muted-foreground">
             Explore all media locations in a tabular format. Click on any row to
