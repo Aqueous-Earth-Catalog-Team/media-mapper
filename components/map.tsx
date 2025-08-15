@@ -195,7 +195,7 @@ export function Map({
 
   return (
     <div className="w-full h-full relative">
-      <div ref={mapContainer} className="w-full h-full" />
+      <div ref={mapContainer} className="w-full h-full rounded-md" />
       <div className="absolute top-26 shadow-lg rounded-sm right-2 z-10 bg-white w-8 h-8 flex items-center justify-center cursor-pointer">
         <CameraIcon
           onClick={() => {

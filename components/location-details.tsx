@@ -15,8 +15,8 @@ interface LocationDetailsProps {
 
 const CONTAINER_CLASS = {
   visible:
-    "shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] mt-[300px] bg-background z-10 relative rounded-t-3xl rounded-b-none md:mt-0 md:absolute md:top-4 md:max-h-[calc(100vh-7rem)] md:rounded-xl md:overflow-y-auto lg:w-[calc(100%-1rem)] md:shadow-2xl md:w-3/5 md:top-4 md:left-4 lg:top-10 lg:left-10 lg:w-1/2  xl:w-1/3",
-  hidden: "shadow-none h-0 mt-0",
+    "fixed bottom-0 left-0 right-0 bg-background z-50 rounded-t-3xl rounded-b-none shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] max-h-[70vh] overflow-y-auto p-4 md:absolute md:top-4 md:left-6 md:right-auto md:w-96 md:max-w-[calc(50vw-2rem)] md:rounded-xl md:shadow-2xl md:!h-fit md:!max-h-[79vh] md:overflow-auto",
+  hidden: "hidden",
 };
 
 /**
@@ -67,26 +67,21 @@ export function LocationDetails({ data }: LocationDetailsProps) {
         mediaPointId ? CONTAINER_CLASS.visible : CONTAINER_CLASS.hidden
       }`}
     >
-      <CardHeader>
+      <CardHeader className="p-0">
         <Badge className="capitalize" variant="secondary">
           {selectedMediaPoint?.media?.media_type}
         </Badge>
         <div className="flex justify-between gap-1">
           <div>
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-xl font-bold">
               {selectedMediaPoint?.media?.name} (
               {selectedMediaPoint?.media?.release_year})
             </CardTitle>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-md text-muted-foreground">
               Created by {selectedMediaPoint?.media?.director}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-11"
-            onClick={handleClose}
-          >
+          <Button variant="ghost" size="icon" onClick={handleClose}>
             <CircleX className="size-6" />
           </Button>
         </div>
@@ -102,12 +97,12 @@ export function LocationDetails({ data }: LocationDetailsProps) {
           </div>
         )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <Metric label="Language" value={selectedMediaPoint?.media?.language} />
         <Metric
           label="Summary"
           value={selectedMediaPoint?.media?.description || ""}
-          className="mt-4"
+          className="mt-3"
         />
         <Metric
           label="Nearest Location"
@@ -116,32 +111,32 @@ export function LocationDetails({ data }: LocationDetailsProps) {
             selectedMediaPoint?.region,
             selectedMediaPoint?.country
           )}
-          className="mt-4"
+          className="mt-3"
         />
 
         <Metric
           label="Natural Feature"
           value={selectedMediaPoint?.natural_feature_name}
-          className="mt-4"
+          className="mt-3"
         />
 
         <Metric
           label="Subjects"
           value={selectedMediaPoint?.media?.subjects}
-          className="mt-4"
+          className="mt-3"
         />
 
         <Metric
           href={selectedMediaPoint?.media?.rights_statement_link || ""}
           label="Media Rights"
           value={selectedMediaPoint?.media?.rights || ""}
-          className="mt-4"
+          className="mt-3"
         />
 
-        <div className="flex justify-end mt-6 ">
+        <div className="flex justify-end mt-6">
           <Button
             variant="outline"
-            className="hidden md:flex "
+            className="hidden md:flex"
             onClick={handleClose}
           >
             Close

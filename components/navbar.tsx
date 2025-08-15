@@ -17,17 +17,17 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="w-full bg-background border-b border-border shadow-sm z-20 sticky top-0">
-      <div className="flex items-center justify-between h-16 pl-10 pr-2 mx-auto">
+    <header className="w-full max-w-7xl mx-auto bg-background">
+      <div className="flex flex-col justify-center items-center gap-2 p-2 md:flex-row md:justify-between md:p-4">
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            {/* <Image
               src="/logo.svg"
               alt="Media Mapper Logo"
               width={28}
               height={28}
               className="dark:invert text-primary"
-            />
+            /> */}
             <span className="text-xl font-medium">Media Mapper</span>
           </Link>
         </div>

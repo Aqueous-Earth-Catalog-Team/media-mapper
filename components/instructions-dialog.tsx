@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { 
-  MousePointer, 
-  MapPin, 
-  X, 
-  Table, 
-  ArrowUpDown, 
-  Search, 
-  Download, 
-  MousePointerClick, 
+import Image from "next/image";
+import UPennLogo from "@/public/upenn_logo.png";
+import {
+  MousePointer,
+  MapPin,
+  X,
+  Table,
+  ArrowUpDown,
+  Search,
+  Download,
+  MousePointerClick,
   Map,
-  HelpCircle
+  HelpCircle,
+  Heart,
+  Github,
 } from "lucide-react";
 import {
   Dialog,
@@ -33,61 +37,70 @@ const mapInstructions: InstructionItem[] = [
   {
     icon: <MousePointer className="w-4 h-4" />,
     title: "Navigate the Map",
-    description: "Click and drag to pan, scroll to zoom, hold Shift and drag to rotate"
+    description:
+      "Click and drag to pan, scroll to zoom, hold Shift and drag to rotate",
   },
   {
     icon: <MapPin className="w-4 h-4" />,
     title: "Explore Locations",
-    description: "Click on any blue marker to view detailed information about that media location"
+    description:
+      "Click on any blue marker to view detailed information about that media location",
   },
   {
     icon: <X className="w-4 h-4" />,
     title: "Close Details",
-    description: "Click the X button or press Escape to close the location details panel"
+    description:
+      "Click the X button or press Escape to close the location details panel",
   },
   {
     icon: <Table className="w-4 h-4" />,
     title: "Table View",
-    description: "Switch to table view using the navigation menu to see all data in a sortable format"
-  }
+    description:
+      "Switch to table view using the navigation menu to see all data in a sortable format",
+  },
 ];
 
 const tableInstructions: InstructionItem[] = [
   {
     icon: <ArrowUpDown className="w-4 h-4" />,
     title: "Sort Data",
-    description: "Click on column headers to sort the data in ascending or descending order"
+    description:
+      "Click on column headers to sort the data in ascending or descending order",
   },
   {
     icon: <Search className="w-4 h-4" />,
     title: "Search & Filter",
-    description: "Use the search bar to find specific entries or filter by location type"
+    description:
+      "Use the search bar to find specific entries or filter by location type",
   },
   {
     icon: <Download className="w-4 h-4" />,
     title: "Export Data",
-    description: "Click the export button to download the current data view as a CSV file"
+    description:
+      "Click the export button to download the current data view as a CSV file",
   },
   {
     icon: <MousePointerClick className="w-4 h-4" />,
     title: "View Details",
-    description: "Click on any row to view detailed information about that media location"
+    description:
+      "Click on any row to view detailed information about that media location",
   },
   {
     icon: <Map className="w-4 h-4" />,
     title: "Map View",
-    description: "Switch back to map view using the navigation menu for spatial exploration"
-  }
+    description:
+      "Switch back to map view using the navigation menu for spatial exploration",
+  },
 ];
 
 export default function InstructionsDialog() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const isMapView = pathname === "/";
-  
+
   const instructions = isMapView ? mapInstructions : tableInstructions;
   const viewTitle = isMapView ? "Map View" : "Table View";
-  const dataDescription = isMapView 
+  const dataDescription = isMapView
     ? "This interactive map displays media locations with geographical context. Each point represents a media object with location data extracted from the source material."
     : "This table view displays all media locations in a sortable, searchable format. Each row represents a media object with detailed information about its location and content.";
 
@@ -104,7 +117,7 @@ export default function InstructionsDialog() {
           Help
         </button>
       </DialogTrigger>
-      <DialogContent 
+      <DialogContent
         id="instructions-dialog"
         className="sm:max-w-[550px] max-h-[80vh] overflow-y-auto"
         aria-describedby="instructions-description"
@@ -117,12 +130,12 @@ export default function InstructionsDialog() {
             {dataDescription}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 mt-4">
           <h3 className="font-medium text-base">Getting Started</h3>
           <div className="grid gap-4">
             {instructions.map((instruction, index) => (
-              <div 
+              <div
                 key={index}
                 className="flex items-start gap-3 p-3 rounded-lg border bg-muted/50"
               >
@@ -140,15 +153,63 @@ export default function InstructionsDialog() {
               </div>
             ))}
           </div>
-          
+
           <div className="pt-4 border-t">
             <h3 className="font-medium text-base mb-2">About the Data</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              This application displays media objects based on their geographical location data. 
-              The data includes various types of media content with location information extracted 
-              from the source material, allowing you to explore how topics are portrayed across 
+              This application displays media objects based on their
+              geographical location data. The data includes various types of
+              media content with location information extracted from the source
+              material, allowing you to explore how topics are portrayed across
               different locations and time periods.
             </p>
+          </div>
+
+          <div className="pt-4 border-t">
+            <h3 className="font-medium text-base mb-3">About Media Mapper</h3>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+                <Heart className="w-4 h-4 mt-0.5 text-red-500" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    <strong>Funding:</strong> Media Mapper is made possible
+                    through funding provided by the
+                    <strong>
+                      <a
+                        href="https://www.upenn.edu/"
+                        className="text-primary underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        University of Pennsylvania, Penn
+                      </a>
+                    </strong>
+                    . This support enables the development of this open-source
+                    framework for spatial media exploration.
+                  </p>
+                  <div className="mt-0.5 relative w-[100px] h-20">
+                    <Image
+                      src={UPennLogo}
+                      alt="University of Pennsylvania Logo"
+                      fill
+                      objectFit="contain"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+                <Github className="w-4 h-4 mt-0.5 text-muted-foreground" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    <strong>Open Source:</strong> Media Mapper is developed as
+                    an open-source project so that anyone seeking to build a
+                    similar application with their own datasets can use or fork
+                    this framework.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>

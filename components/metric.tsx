@@ -20,7 +20,7 @@ function Label({
   children: React.ReactNode;
 }) {
   return (
-    <span className={cn("text-muted-foreground text-sm", className)}>
+    <span className={cn("text-xs text-muted-foreground", className)}>
       {children}
     </span>
   );
@@ -44,7 +44,7 @@ export function Metric({
     return (
       <Container className={className}>
         <Label>{label}</Label>
-        <p className="text-[16px]">{fallback}</p>
+        <p className="text-sm">{fallback}</p>
       </Container>
     );
   }
@@ -60,7 +60,7 @@ export function Metric({
       return (
         <Container className={className}>
           <Label>{label}</Label>
-          <p className="text-[16px]">{fallback}</p>
+          <p className="text-sm">{fallback}</p>
         </Container>
       );
     }
@@ -89,7 +89,7 @@ export function Metric({
       <Container className={className}>
         <Label>{label}</Label>
         <a
-          className="text-[16px] flex items-center gap-1 underline"
+          className="text-sm flex items-center gap-1 underline"
           href={href}
           target="_blank"
           rel="noopener noreferrer"
@@ -105,7 +105,7 @@ export function Metric({
   return (
     <Container className={className}>
       <Label>{label}</Label>
-      <p className="text-[16px]">{value}</p>
+      <p className="text-sm">{value}</p>
     </Container>
   );
 }

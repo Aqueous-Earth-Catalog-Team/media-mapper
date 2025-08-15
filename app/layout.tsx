@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
 
@@ -17,7 +18,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Media Mapper",
   description:
-    "Explore media objects based on their geographical location data",
+    "Explore media objects based on their geographical location data. An open-source framework made possible through funding provided by the University of Pennsylvania.",
+  keywords: [
+    "media mapping",
+    "geographical data",
+    "spatial exploration",
+    "open source",
+    "University of Pennsylvania",
+  ],
+  authors: [
+    {
+      name: "Media Mapper Project",
+      url: "https://github.com/yourusername/media-mapper",
+    },
+  ],
+  creator: "University of Pennsylvania",
 };
 
 export default function RootLayout({
@@ -37,7 +52,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main>{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

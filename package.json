@@ -1,6 +1,8 @@
 {
   "name": "media-mapper",
   "version": "0.1.0",
+  "description": "An open-source framework for exploring media objects based on their geographical location data. Made possible through funding provided by the University of Pennsylvania.",
+  "author": "Media Mapper Project",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

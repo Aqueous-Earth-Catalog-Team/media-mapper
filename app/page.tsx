@@ -13,13 +13,10 @@ export default async function Home() {
     .map((f) => [f.longitude, f.latitude]) as LngLatBoundsLike;
 
   return (
-    <div className="w-full h-full">
-      <div className="relative">
+    <div className="w-full h-full relative">
+      <div className="px-4 py-2 w-full max-w-7xl mx-auto relative h-[calc(100vh-12rem)] lg:h-[calc(100vh-168px)]">
+        <Map data={mediaPoints} bounds={mapBounds} />
         <LocationDetails data={mediaPoints} />
-
-        <div className="fixed top-[4rem] left-0 w-full h-[calc(100vh-4rem)] lg:relative lg:top-0">
-          <Map data={mediaPoints} bounds={mapBounds} />
-        </div>
       </div>
     </div>
   );
