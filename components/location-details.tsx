@@ -58,14 +58,14 @@ export function LocationDetails({ data }: LocationDetailsProps) {
     if (mediaPointId && cardRef.current) {
       // Focus the card when it opens
       cardRef.current.focus();
-      
+
       // Handle Escape key to close
       const handleKeyDown = (event: KeyboardEvent) => {
         if (event.key === "Escape") {
           handleClose();
         }
       };
-      
+
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
@@ -99,11 +99,19 @@ export function LocationDetails({ data }: LocationDetailsProps) {
         </Badge>
         <div className="flex justify-between gap-1">
           <div>
-            <CardTitle id="location-title" className="text-xl font-bold" role="heading" aria-level={2}>
+            <CardTitle
+              id="location-title"
+              className="text-xl font-bold"
+              role="heading"
+              aria-level={2}
+            >
               {selectedMediaPoint?.media?.name} (
               {selectedMediaPoint?.media?.release_year})
             </CardTitle>
-            <p id="location-description" className="text-md text-muted-foreground">
+            <p
+              id="location-description"
+              className="text-md text-muted-foreground"
+            >
               Created by {selectedMediaPoint?.media?.director}
             </p>
           </div>
@@ -116,7 +124,11 @@ export function LocationDetails({ data }: LocationDetailsProps) {
           <div className="relative w-full h-50 mt-2">
             <Image
               src={selectedMediaPoint.media.image.url || ""}
-              alt={`Image from ${selectedMediaPoint.media.name || "unknown media"} (${selectedMediaPoint.media.release_year || "unknown year"}) by ${selectedMediaPoint.media.director || "unknown director"}`}
+              alt={`Image from ${
+                selectedMediaPoint.media.name || "unknown media"
+              } (${
+                selectedMediaPoint.media.release_year || "unknown year"
+              }) by ${selectedMediaPoint.media.director || "unknown director"}`}
               fill
               className="object-cover rounded"
             />
