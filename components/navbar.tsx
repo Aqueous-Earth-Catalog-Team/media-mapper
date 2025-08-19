@@ -12,7 +12,7 @@ const INACTIVE_CLASSNAMES =
   "text-muted-foreground hover:text-foreground hover:bg-muted";
 const ACTIVE_CLASSNAMES = "bg-primary text-primary-foreground";
 
-export default function Navbar() {
+export default function Navbar({ title }: { title: string }) {
   const pathname = usePathname();
 
   return (
@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="flex flex-col justify-center items-center gap-2 p-2 md:flex-row md:justify-between md:p-4">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-xl font-medium">Media Mapper</span>
+            <span className="text-xl font-medium">{title}</span>
           </Link>
         </div>
         <nav role="navigation" aria-label="Main navigation">

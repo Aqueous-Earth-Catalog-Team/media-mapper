@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
+import { getWebAppMetadata } from "./data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,31 +17,40 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Media Mapper",
-  description:
-    "Explore media objects based on their geographical location data. An open-source framework made possible through funding provided by the University of Pennsylvania.",
-  keywords: [
-    "media mapping",
-    "geographical data",
-    "spatial exploration",
-    "open source",
-    "University of Pennsylvania",
-  ],
-  authors: [
-    {
-      name: "Media Mapper Project",
-      url: "https://github.com/yourusername/media-mapper",
-    },
-  ],
-  creator: "University of Pennsylvania",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const metadata = await getWebAppMetadata();
+    return {
+      title: metadata.title,
+      description: metadata.description,
+      keywords: metadata.keywords,
+      creator: metadata.creator,
+    };
+  } catch (error) {
+    return {
+      title: "Media Mapper",
+      description:
+        "Explore media objects based on their geographical location data. An open-source framework made possible through funding provided by the University of Pennsylvania.",
+      keywords: [
+        "media mapping",
+        "geographical data",
+        "spatial exploration",
+        "open source",
+        "University of Pennsylvania",
+      ],
+      creator:
+        "Ennuri Jo through funding provided by the University of Pennsylvania. Development work completed by Lost Creek Designs LLC.",
+    };
+  }
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const metadata = await getWebAppMetadata();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -58,11 +68,11 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
-          <Navbar />
+          <Navbar title={metadata.title} />
           <main id="main-content" role="main">
             {children}
           </main>
-          <Footer />
+          <Footer owner={metadata.owner} />
         </ThemeProvider>
         {process.env.ENABLE_ANALYTICS === "true" && <Analytics />}
       </body>

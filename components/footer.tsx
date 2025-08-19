@@ -3,9 +3,12 @@ import Image from "next/image";
 import { Github } from "lucide-react";
 import UPennLogo from "@/public/upenn_logo.png";
 
-export default function Footer() {
+export default function Footer({ owner }: { owner: string }) {
   return (
-    <footer className="w-full max-w-7xl mx-auto bg-background" role="contentinfo">
+    <footer
+      className="w-full max-w-7xl mx-auto bg-background"
+      role="contentinfo"
+    >
       <div className="flex flex-col px-4 py-2 md:flex-row md:justify-between">
         <div className="flex flex-col items-center md:items-start">
           <span className="text-sm text-muted-foreground font-medium">
@@ -37,7 +40,7 @@ export default function Footer() {
 
         <div className="flex flex-col gap-1 items-center md:items-end">
           <span className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Media Mapper
+            © {new Date().getFullYear()} {owner}
           </span>
           <span className="text-sm text-muted-foreground">
             Built by{" "}

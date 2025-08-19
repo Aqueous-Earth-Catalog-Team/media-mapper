@@ -1,6 +1,7 @@
 import { base, convertKeysToSnakeCase } from "@/lib/airtable";
 
 const MEDIA_LOCATION_TABLE_NAME = "Media Locations";
+const WEB_APP_METADATA_TABLE_NAME = "Web App Metadata";
 
 export async function getMediaPoints() {
   const response = await base(MEDIA_LOCATION_TABLE_NAME)
@@ -46,4 +47,28 @@ export async function getMediaPoints() {
     });
 
   return response;
+}
+
+export async function getWebAppMetadata() {
+  const response = await base(WEB_APP_METADATA_TABLE_NAME)
+    .select({
+      view: process.env.AIRTABLE_VIEW_NAME,
+    })
+    .all()
+    .then((records) => {
+      return records.map((record) => {
+        const fields = convertKeysToSnakeCase(record.fields);
+        return {
+          title: fields.site_title,
+          description: fields.site_description,
+          keywords: fields.site_keywords,
+          creator: fields.creator,
+          owner: fields.owner,
+        };
+      });
+    });
+
+  const metadata = response[0] || {};
+
+  return metadata;
 }
