@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
       keywords: metadata.keywords,
       creator: metadata.creator,
     };
-  } catch (error) {
+  } catch {
     return {
       title: "Media Mapper",
       description:
