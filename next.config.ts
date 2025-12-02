@@ -10,6 +10,14 @@ const nextConfig = {
     // See https://nextjs.org/docs/app/guides/mdx#using-the-rust-based-mdx-compiler-experimental
     mdxRs: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https" as const,
+        hostname: "v5.airtableusercontent.com",
+      },
+    ],
+  },
 };
 
 const withMDX = createMDX({
