@@ -1,4 +1,5 @@
 "use client";
+
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl, { GeoJSONSource, LngLatBoundsLike } from "mapbox-gl";
@@ -31,7 +32,6 @@ export function Map({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-
   // Grab the idea of the selected media point from the URL
   const searchParams = useSearchParams();
   const mediaPointId = searchParams.get("mediaPointId");
@@ -230,6 +230,18 @@ export function Map({
       }
     };
   }, [isMapLoaded, data]);
+
+  /** =============================================== */
+  /** Randomly Select a Media Point */
+  /** =============================================== */
+  // useEffect(() => {
+  //   if (selectedMediaPoint || !isMapLoaded) {
+  //     return;
+  //   }
+
+  //   const randomIndex = Math.floor(Math.random() * data.length);
+  //   window.history.pushState({}, "", `?mediaPointId=${data[randomIndex].id}`);
+  // }, [isMapLoaded]);
 
   /** =============================================== */
   /** Pan the map to the selected media point
