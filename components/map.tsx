@@ -269,6 +269,18 @@ export function Map({
     }
   }, [selectedMediaPoint, isMapLoaded]);
 
+  /** =============================================== */
+  /** Randomly Select a Media Point */
+  /** =============================================== */
+  useEffect(() => {
+    if (selectedMediaPoint || !isMapLoaded) {
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * data.length);
+    window.history.pushState({}, "", `?mediaPointId=${data[randomIndex].id}`);
+  }, [isMapLoaded]);
+
   return (
     <div className="w-full h-full relative">
       <div
