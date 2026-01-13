@@ -232,18 +232,6 @@ export function Map({
   }, [isMapLoaded, data]);
 
   /** =============================================== */
-  /** Randomly Select a Media Point */
-  /** =============================================== */
-  // useEffect(() => {
-  //   if (selectedMediaPoint || !isMapLoaded) {
-  //     return;
-  //   }
-
-  //   const randomIndex = Math.floor(Math.random() * data.length);
-  //   window.history.pushState({}, "", `?mediaPointId=${data[randomIndex].id}`);
-  // }, [isMapLoaded]);
-
-  /** =============================================== */
   /** Pan the map to the selected media point
    *
    * Also, change the color and radius of the selected media point

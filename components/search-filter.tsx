@@ -54,49 +54,47 @@ export default function SearchAndFilter({ data }: { data: MediaLocation[] }) {
   const [countryOpen, setCountryOpen] = useState(false);
   const [waterOpen, setWaterOpen] = useState(false);
 
+  const [countries] = useState([...new Set(data.map(media => media.country))].map(country => ({ value: country?.toLowerCase(), label: country?.toUpperCase() })))
+  const [bodiesOfWater] = useState([...new Set(data.map(media => media.natural_feature_name))].map(country => ({ value: country?.toLowerCase(), label: country?.toUpperCase() })))
+
   console.debug(data);
 
   return (
-    <div className='border min-w-[500px]'>
-      <div>
-        <h1>Search</h1>
-        <Command>
-          <CommandInput placeholder="Search Media Locations" value={searchValue} onValueChange={setSearchValue} onFocus={() => setOpen(open => !open)} />
+    <div className='border flex'>
+      <Command className='max-w-[500]'>
+        <CommandInput placeholder="Search Media Locations" value={searchValue} onValueChange={setSearchValue} onFocus={() => setOpen(open => !open)} />
 
-          {searchValue && open &&
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup heading="Media Locations">
-                {data.map((media) => (
-                  // Add function to convert media searches
-                  <CommandItem
-                    key={media.id}
-                    value={`${media.name} ${media?.city} ${media?.country} ${media.media?.release_year} ${media.region}`}
-                    onSelect={() => {
-                      // Update all mediaPointId to check search params
-                      window.history.pushState({}, "", `?mediaPointId=${media.id}`);
-                      setOpen(false);
-                    }}>
-                    {media.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          }
-        </Command>
-      </div>
+        {searchValue && open &&
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Media Locations">
+              {data.map((media) => (
+                // Add function to convert media searches
+                <CommandItem
+                  key={media.id}
+                  value={`${media.name} ${media?.city} ${media?.country} ${media.media?.release_year} ${media.region} ${media.location_name}`}
+                  onSelect={() => {
+                    // Update all mediaPointId to check search params
+                    window.history.pushState({}, "", `?mediaPointId=${media.id}`);
+                    setOpen(false);
+                  }}>
+                  {media.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        }
+      </Command>
 
       <div>
-        <h1>Filters</h1>
-
         <Popover open={countryOpen} onOpenChange={setCountryOpen}>
           <PopoverTrigger asChild>
             <Button role="combobox"></Button>
           </PopoverTrigger>
         </Popover>
 
-        <Button>Apply filters</Button>
       </div>
+      <Button className='justify-self-end'>Apply filters</Button>
 
     </div>
   );
