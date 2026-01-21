@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { addQueryParameter } from '@/lib/utils';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
@@ -201,7 +202,8 @@ export function Map({
       const props = feature.properties;
 
       if (props && props.id) {
-        window.history.pushState({}, "", `?mediaPointId=${props.id}`);
+        const params = addQueryParameter(window.location.search, "mediaPointId", props.id);
+        window.history.pushState({}, "", params);
       }
     });
 

@@ -26,8 +26,8 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
 
 	const filteredMediaPoints = useMemo(() => {
 		return mediaPoints.filter(media => {
-			if (filters.countries.length > 0 && !filters.countries.includes(media?.country || '')) return false;
-			if (filters.bodiesOfWater.length > 0 && !filters.bodiesOfWater.includes(media.natural_feature_name?.toUpperCase() || '')) return false;
+			if (filters.countries.length > 0 && !filters.countries.includes(media?.country?.toLowerCase() || '')) return false;
+			if (filters.bodiesOfWater.length > 0 && !filters.bodiesOfWater.includes(media.natural_feature_name?.toLowerCase() || '')) return false;
 			if (filters.startYear && media.media?.release_year && media.media?.release_year < +filters.startYear) return false;
 			if (filters.endYear && media.media?.release_year && media.media?.release_year > +filters.endYear) return false;
 
@@ -44,7 +44,7 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
 		<div className=''>
 			<div className="px-4 py-2 w-full max-w-7xl mx-auto relative h-[calc(100vh-12rem)] lg:h-[calc(100vh-168px)]">
 				<div className='border flex p-2 gap-1'>
-					<Search data={mediaPoints} />
+					<Search data={filteredMediaPoints} />
 					<SearchAndFilter data={mediaPoints} filters={filters} />
 				</div>
 				<Map data={filteredMediaPoints} bounds={mapBounds} />

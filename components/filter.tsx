@@ -6,9 +6,7 @@ import { MediaLocation } from '@/lib/airtable/types';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { Badge } from './ui/badge';
-import { usePathname, useRouter } from 'next/navigation';
+import { Check, ChevronsUpDown, FilterIcon } from 'lucide-react';
 import { Label } from './ui/label';
 
 /* ---- QUESTIONS ----
@@ -29,11 +27,9 @@ import { Label } from './ui/label';
 */
 
 export default function Filter({ data, filters }: { data: MediaLocation[], filters: any }) {
-  const router = useRouter();
-  const pathname = usePathname();
-
   const [selectedCountry, setSelectedCountry] = useState<string[]>(filters.countries);
   const [selectedWater, setSelectedWater] = useState<string[]>(filters.bodiesOfWater);
+  const [filtersOpen, setOpenFilters] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
   const [waterOpen, setWaterOpen] = useState(false);
   const [startYear, setStartYear] = useState(filters.startYear);
@@ -66,15 +62,15 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
       newParams.append("end_year", '' + endYear);
     }
 
-    router.push(`${pathname}?${newParams.toString()}`, { scroll: true });
+    history.pushState({}, "", `/?${newParams.toString()}`);
   }
 
-  return (
-    <div className='flex gap-1'>
+  const filterInputs = (
+    <div className='flex flex-col md:flex-row gap-1 flex-wrap'>
       <div>
         <Popover open={countryOpen} onOpenChange={setCountryOpen}>
           <PopoverTrigger asChild>
-            <div className='flex flex-col gap-1  min-w-52'>
+            <div className='flex flex-col gap-1 min-w-52'>
               <Label>Countries</Label>
               <Button role="combobox" variant="outline" aria-expanded={countryOpen}>
                 {selectedCountry.length > 0 ? `${selectedCountry.length} Selected` : 'Select Countries'}
@@ -139,15 +135,51 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
 
       <div className='flex flex-col gap-1'>
         <Label>Start Year</Label>
-        <Input value={startYear} min={Math.min(...data.map(d => d.media?.release_year))} onChange={(e) => setStartYear(e.target.value)} type='number' placeholder='Start Year' className='min-w-52' />
+        <Input
+          value={startYear}
+          min={Math.min(...data.map(d => d.media?.release_year))}
+          max={Math.max(...data.map(d => d.media?.release_year))}
+          onChange={(e) => setStartYear(e.target.value)}
+          type='number'
+          placeholder='Start Year'
+          className='min-w-52' />
       </div>
 
       <div className='flex flex-col gap-1'>
         <Label>End Year</Label>
-        <Input value={endYear} max={Math.max(...data.map(d => d.media?.release_year))} onChange={(e) => setEndYear(e.target.value)} type='number' placeholder='End Year' className='min-w-52' />
+        <Input
+          value={endYear}
+          min={Math.min(...data.map(d => d.media?.release_year))}
+          max={Math.max(...data.map(d => d.media?.release_year))}
+          onChange={(e) => setEndYear(e.target.value)}
+          type='number'
+          placeholder='End Year'
+          className='min-w-52' />
       </div>
 
       <Button className='justify-self-end' onClick={handleApplyFilters}>Apply filters</Button>
     </div>
+  );
+  return (
+
+    <>
+      <div className='hidden md:block'>
+        {filterInputs}
+      </div>
+
+      <div className='md:hidden'>
+        <Popover open={filtersOpen} onOpenChange={setOpenFilters}>
+          <PopoverTrigger asChild>
+            <Button variant="outline">
+              <FilterIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            {filterInputs}
+          </PopoverContent>
+        </Popover>
+      </div>
+    </>
+
   );
 }

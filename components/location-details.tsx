@@ -10,6 +10,7 @@ import { Metric } from "@/components/metric";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { removeQueryParameter } from '@/lib/utils';
 
 interface LocationDetailsProps {
   data: MediaLocation[];
@@ -17,7 +18,7 @@ interface LocationDetailsProps {
 
 const CONTAINER_CLASS = {
   visible:
-    "fixed bottom-0 left-0 right-0 bg-background z-50 rounded-t-3xl rounded-b-none shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] max-h-[70vh] overflow-y-auto p-4 md:absolute md:top-4 md:left-6 md:right-auto md:w-96 md:max-w-[calc(50vw-2rem)] md:rounded-xl md:shadow-2xl md:!h-fit md:!max-h-[79vh] md:overflow-auto",
+    "fixed bottom-0 left-0 right-0 bg-background z-50 rounded-t-3xl rounded-b-none shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] max-h-[70vh] overflow-y-auto p-4 md:absolute md:top-24 md:left-6 md:right-auto md:w-96 md:max-w-[calc(50vw-2rem)] md:rounded-xl md:shadow-2xl md:!h-fit md:!max-h-[79vh] md:overflow-auto",
   hidden: "hidden",
 };
 
@@ -77,7 +78,8 @@ export function LocationDetails({ data }: LocationDetailsProps) {
     : null;
 
   function handleClose() {
-    window.history.pushState({}, "", "/");
+    console.debug(removeQueryParameter("mediaPointId"));
+    window.history.pushState({}, "", removeQueryParameter("mediaPointId"));
   }
 
   if (!selectedMediaPoint) return null;
@@ -90,10 +92,7 @@ export function LocationDetails({ data }: LocationDetailsProps) {
       aria-modal="true"
       aria-labelledby="location-title"
       aria-describedby="location-description"
-      className={`${
-        mediaPointId ? CONTAINER_CLASS.visible : CONTAINER_CLASS.hidden
-      }`}
-    >
+      className={`${mediaPointId ? CONTAINER_CLASS.visible : CONTAINER_CLASS.hidden}`}>
       <CardHeader className="p-0">
         <Badge className="capitalize" variant="secondary">
           {selectedMediaPoint?.media?.media_type}
@@ -137,11 +136,9 @@ export function LocationDetails({ data }: LocationDetailsProps) {
           <div className="relative w-full h-50 mt-2">
             <Image
               src={selectedMediaPoint.media.image.url || ""}
-              alt={`Image from ${
-                selectedMediaPoint.media.name || "unknown media"
-              } (${
-                selectedMediaPoint.media.release_year || "unknown year"
-              }) by ${selectedMediaPoint.media.director || "unknown director"}`}
+              alt={`Image from ${selectedMediaPoint.media.name || "unknown media"
+                } (${selectedMediaPoint.media.release_year || "unknown year"
+                }) by ${selectedMediaPoint.media.director || "unknown director"}`}
               fill
               className="object-cover rounded"
             />

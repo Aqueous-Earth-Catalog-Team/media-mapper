@@ -64,3 +64,24 @@ export function exportToCSV(filteredRows: Row<MediaLocation>[]) {
   link.click();
   document.body.removeChild(link);
 }
+
+export function removeQueryParameter(param: string): string {
+  const currentURL = new URL(window.location.href).search;
+  const params = new URLSearchParams(currentURL);
+
+  params.delete(param);
+
+  return `?${params.toString()}`;
+}
+
+export function addQueryParameter(currentURL: string, param: string, value: string | number): string {
+  console.debug("param", currentURL);
+  // const cUrl = new URL(window.location.href).search;
+  const params = new URLSearchParams(currentURL);
+  
+  console.debug("query p", params.toString());
+
+  params.set(param, `${value}`);
+
+  return `?${params.toString()}`;
+}
