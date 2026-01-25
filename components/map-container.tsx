@@ -4,10 +4,10 @@ import { MediaLocation } from '@/lib/airtable/types';
 import { LngLatBoundsLike } from 'mapbox-gl';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-import SearchAndFilter from './filter';
 import { LocationDetails } from './location-details';
 import { Map } from "@/components/map";
 import Search from './search';
+import Filter from './filter';
 
 
 interface MapContainerProps {
@@ -41,15 +41,13 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
 		.map((f) => [f.longitude, f.latitude]) as LngLatBoundsLike;
 
 	return (
-		<div className=''>
-			<div className="px-4 py-2 w-full max-w-7xl mx-auto relative h-[calc(100vh-12rem)] lg:h-[calc(100vh-168px)]">
-				<div className='border flex p-2 gap-1'>
-					<Search data={filteredMediaPoints} />
-					<SearchAndFilter data={mediaPoints} filters={filters} />
-				</div>
-				<Map data={filteredMediaPoints} bounds={mapBounds} />
-				<LocationDetails data={mediaPoints} />
+		<div className="px-4 py-2 w-full max-w-7xl mx-auto relative h-[calc(100vh-16rem)]">
+			<div className='flex p-2 gap-1 items-end flex-wrap lg:justify-between'>
+				<Search data={filteredMediaPoints} />
+				<Filter data={mediaPoints} filters={filters} />
 			</div>
+			<Map data={filteredMediaPoints} bounds={mapBounds} />
+			<LocationDetails data={mediaPoints} />
 		</div>
 	);
 }

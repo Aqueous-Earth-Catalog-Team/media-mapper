@@ -5,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { useState } from 'react';
 import { addQueryParameter } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Label } from './ui/label';
 
 
 export default function Search({ data }: { data: MediaLocation[] }) {
@@ -12,11 +13,11 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<Command>
+		<Command className='basis-xs'>
 			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger asChild>
 					<CommandInput
-						className='max-w-[500px]'
+						className='max-w-[500px] justify-end'
 						placeholder="Search Media Locations"
 						value={searchValue}
 						onValueChange={setSearchValue} />
@@ -24,7 +25,7 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 				<PopoverContent onOpenAutoFocus={(e) => e.preventDefault()}>
 					<CommandList>
 						<CommandEmpty>No results found.</CommandEmpty>
-						<CommandGroup heading="Media Locations">
+						<CommandGroup heading="Media">
 							{data.map((media) => (
 								<CommandItem
 									key={media.id}
@@ -34,10 +35,15 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 										window.history.pushState({}, "", params);
 										setOpen(false);
 									}}>
-									{/* NAME
-												Country Year Made
-										*/}
-									{media.name}
+									<div className='w-full'>
+										<div><strong>{media.name}</strong></div>
+										<div>
+											<div className='flex justify-between'>
+												<div className='text-muted-foreground'>{media?.country}</div>
+												<div className='text-muted-foreground'>{media?.media?.release_year}</div>
+											</div>
+										</div>
+									</div>
 								</CommandItem>
 							))}
 						</CommandGroup>
