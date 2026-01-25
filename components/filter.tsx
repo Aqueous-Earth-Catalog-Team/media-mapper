@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Check, ChevronsUpDown, FilterIcon } from 'lucide-react';
 import { Label } from './ui/label';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 /* ---- QUESTIONS ----
   1. Do we want the combo box to be it's own component? Yes
@@ -62,6 +63,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
       newParams.append("end_year", '' + endYear);
     }
 
+    setOpenFilters(false);
     history.pushState({}, "", `/?${newParams.toString()}`);
   }
 
@@ -157,7 +159,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
           className='min-w-52' />
       </div>
 
-      <Button className='justify-self-end' onClick={handleApplyFilters}>Apply filters</Button>
+      <Button className='justify-self-end hidden md:block' onClick={handleApplyFilters}>Apply filters</Button>
     </div>
   );
   return (
@@ -168,16 +170,58 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
       </div>
 
       <div className='md:hidden'>
-        <Popover open={filtersOpen} onOpenChange={setOpenFilters}>
-          <PopoverTrigger asChild>
+        <Dialog open={filtersOpen} onOpenChange={setOpenFilters}>
+          <DialogTrigger asChild>
             <Button variant="outline">
               <FilterIcon />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            {filterInputs}
-          </PopoverContent>
-        </Popover>
+          </DialogTrigger>
+          <DialogContent onInteractOutside={e => e.preventDefault()}>
+            <DialogHeader>
+              <DialogTitle>Map Filter</DialogTitle>
+              <DialogDescription>Filter media points shown on map. Click apply filters when you are done.</DialogDescription>
+            </DialogHeader>
+
+            {console.debug("Country open", countryOpen)}
+            <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+              <div className='flex flex-col gap-1 min-w-52'>
+                <Label>Countries</Label>
+                <PopoverTrigger asChild>
+                  <Button role="combobox" variant="outline" aria-expanded={countryOpen}>
+                    {selectedCountry.length > 0 ? `${selectedCountry.length} Selected` : 'Select Countries'} {countryOpen ? "open" : "closed"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+              </div>
+              <PopoverContent className='z-[100]' sideOffset={5} align='start'>
+                <Command>
+                  <CommandInput placeholder='Search Countries...' />
+                  <CommandList>
+                    <CommandEmpty>No Country Found.</CommandEmpty>
+                    <CommandGroup>
+                      {countries.map((country) => (
+                        <CommandItem
+                          onSelect={() => handleSelectCountry(country.value)}
+                          key={country.value}
+                          value={country.value}>
+                          {country.label}
+                          {selectedCountry.includes(country.value) && <Check />}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button type='submit' onClick={handleApplyFilters}>Apply filters</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
 
