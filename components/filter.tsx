@@ -9,6 +9,8 @@ import { Input } from './ui/input';
 import { Check, ChevronsUpDown, FilterIcon } from 'lucide-react';
 import { Label } from './ui/label';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from './ui/drawer';
+import { useIsMobile } from './hooks/use-mobile';
 
 /* ---- QUESTIONS ----
   1. Do we want the combo box to be it's own component? Yes
@@ -28,6 +30,8 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 */
 
 export default function Filter({ data, filters }: { data: MediaLocation[], filters: any }) {
+  const isMobile = useIsMobile();
+
   const [selectedCountry, setSelectedCountry] = useState<string[]>(filters.countries);
   const [selectedWater, setSelectedWater] = useState<string[]>(filters.bodiesOfWater);
   const [filtersOpen, setOpenFilters] = useState(false);
@@ -158,18 +162,16 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
           placeholder='End Year'
           className='min-w-52' />
       </div>
-
-      <Button className='justify-self-end hidden md:block' onClick={handleApplyFilters}>Apply filters</Button>
     </div>
   );
   return (
-
     <>
-      <div className='hidden md:block'>
-        {filterInputs}
-      </div>
-
-      <div className='md:hidden'>
+      {!isMobile ? (
+        <div className=''>
+          {filterInputs}
+          <Button className='justify-self-end' onClick={handleApplyFilters}>Apply filters</Button>
+        </div>
+      ) : (
         <Dialog open={filtersOpen} onOpenChange={setOpenFilters}>
           <DialogTrigger asChild>
             <Button variant="outline">
@@ -181,49 +183,17 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
               <DialogTitle>Map Filter</DialogTitle>
               <DialogDescription>Filter media points shown on map. Click apply filters when you are done.</DialogDescription>
             </DialogHeader>
-
-            {console.debug("Country open", countryOpen)}
-            <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-              <div className='flex flex-col gap-1 min-w-52'>
-                <Label>Countries</Label>
-                <PopoverTrigger asChild>
-                  <Button role="combobox" variant="outline" aria-expanded={countryOpen}>
-                    {selectedCountry.length > 0 ? `${selectedCountry.length} Selected` : 'Select Countries'} {countryOpen ? "open" : "closed"}
-                    <ChevronsUpDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </PopoverTrigger>
-              </div>
-              <PopoverContent className='z-[100]' sideOffset={5} align='start'>
-                <Command>
-                  <CommandInput placeholder='Search Countries...' />
-                  <CommandList>
-                    <CommandEmpty>No Country Found.</CommandEmpty>
-                    <CommandGroup>
-                      {countries.map((country) => (
-                        <CommandItem
-                          onSelect={() => handleSelectCountry(country.value)}
-                          key={country.value}
-                          value={country.value}>
-                          {country.label}
-                          {selectedCountry.includes(country.value) && <Check />}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-
+            {filterInputs}
             <DialogFooter>
-              <DialogClose asChild>
+              <DrawerClose asChild>
                 <Button variant="outline">Cancel</Button>
-              </DialogClose>
+              </DrawerClose>
               <Button type='submit' onClick={handleApplyFilters}>Apply filters</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </div>
+      )
+      }
     </>
-
   );
 }
