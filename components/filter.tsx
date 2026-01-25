@@ -11,24 +11,6 @@ import { Label } from './ui/label';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useIsTablet } from './hooks/use-tablet';
 
-/* ---- QUESTIONS ----
-  1. Do we want the combo box to be it's own component? Yes
-  2. Do we want a label for each input? Yes
-  3. We have America and USA for a country?
-  4. We might want to send all the locations here to begin with? Since we can adjust the filters before applying.
-  5. Do we want a label for each of the inputs?
-
-  ----- TODO'S -----
-  1. Add in search params, potentially remove our state tracking and only use search params
-  2. Add more details to search
-
-
-  ----- Defined Behavior -----
-  1. When you apply filter, it removes selected media. Can change
-  2. Thought about the badge thing, could be good, but the page jumping can get a little aggressive, I chose to have them checked and sorted to the top.
-  3. 
-*/
-
 export default function Filter({ data, filters }: { data: MediaLocation[], filters: any }) {
   const isMobile = useIsTablet();
 
