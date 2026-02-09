@@ -75,14 +75,8 @@ export function removeQueryParameter(param: string): string {
 }
 
 export function addQueryParameter(currentURL: string, param: string, value: string | number): string {
-  console.debug("param", currentURL);
-  // const cUrl = new URL(window.location.href).search;
   const params = new URLSearchParams(currentURL);
-  
-  console.debug("query p", params.toString());
-
   params.set(param, `${value}`);
-
   return `?${params.toString()}`;
 }
 

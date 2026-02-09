@@ -5,8 +5,6 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { useState } from 'react';
 import { addQueryParameter } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { Label } from './ui/label';
-
 
 export default function Search({ data }: { data: MediaLocation[] }) {
 	const [searchValue, setSearchValue] = useState('');
@@ -20,11 +18,17 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 						<CommandInput
 							className='p-0'
 							placeholder="Search Media Locations"
+							aria-label='Search media locations'
 							value={searchValue}
 							onValueChange={setSearchValue} />
 					</div>
 				</PopoverTrigger>
-				<PopoverContent onOpenAutoFocus={(e) => e.preventDefault()} align='start' sideOffset={5} className='p-0 max-w-[350px]' style={{ width: 'var(--radix-popover-anchor-width)' }}>
+				<PopoverContent
+					onOpenAutoFocus={(e) => e.preventDefault()}
+					align='start'
+					sideOffset={5}
+					className='p-0 max-w-[350px]'
+					style={{ width: 'var(--radix-popover-anchor-width)' }}>
 					<CommandList>
 						<CommandEmpty>No results found.</CommandEmpty>
 						<CommandGroup heading="Media">

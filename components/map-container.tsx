@@ -9,7 +9,6 @@ import { Map } from "@/components/map";
 import Search from './search';
 import Filter from './filter';
 
-
 interface MapContainerProps {
 	mediaPoints: MediaLocation[],
 }

@@ -6,13 +6,13 @@ import { MapFilters, MediaLocation } from '@/lib/airtable/types';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Check, ChevronsUpDown, CircleX, FilterIcon } from 'lucide-react';
+import { Check, ChevronsUpDown, FilterIcon } from 'lucide-react';
 import { Label } from './ui/label';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useIsTablet } from './hooks/use-tablet';
 
 export default function Filter({ data, filters }: { data: MediaLocation[], filters: MapFilters }) {
-  const isMobile = useIsTablet();
+  const isTablet = useIsTablet();
 
   const [selectedCountry, setSelectedCountry] = useState<string[]>(filters.countries);
   const [selectedWater, setSelectedWater] = useState<string[]>(filters.bodiesOfWater);
@@ -69,7 +69,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         </PopoverTrigger>
         <PopoverContent className='max-h-[300px]'>
           <Command>
-            <CommandInput placeholder='Search Countries...' />
+            <CommandInput placeholder='Search Countries...' aria-label='Filter by country' />
             <CommandList className='max-h-[200px] overflow-y-auto'>
               <CommandEmpty>No Country Found.</CommandEmpty>
 
@@ -111,7 +111,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         </PopoverTrigger>
         <PopoverContent className='max-h-[300px]' onOpenAutoFocus={(e) => e.preventDefault()}>
           <Command>
-            <CommandInput placeholder='Search Bodies of Water...' />
+            <CommandInput placeholder='Search Bodies of Water...' aria-label='Filter by body of water' />
             <CommandList className='max-h-[200px] overflow-y-auto'>
               <CommandEmpty>No Bodies of Water Found.</CommandEmpty>
 
@@ -148,6 +148,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             min={minYear}
             max={maxYear}
             onChange={(e) => setStartYear(e.target.value)}
+            aria-label='From year'
             type='number'
             placeholder='Start Year'
             className='min-w-28' />
@@ -158,7 +159,8 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             max={maxYear}
             onChange={(e) => setEndYear(e.target.value)}
             type='number'
-            placeholder='End Year'
+            aria-label='Filter by latest release year'
+            placeholder='To year'
             className='min-w-28' />
         </div>
       </div>
@@ -166,15 +168,15 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
   );
   return (
     <>
-      {!isMobile ? (
+      {!isTablet ? (
         <div className='flex items-end gap-2'>
           {filterInputs}
-          <Button onClick={handleApplyFilters}>Apply</Button>
+          <Button onClick={handleApplyFilters} aria-label='Apply filters'>Apply</Button>
         </div>
       ) : (
         <Dialog open={filtersOpen} onOpenChange={setOpenFilters}>
           <DialogTrigger asChild>
-            <Button variant="outline">
+            <Button variant="outline" aria-label='Open filters'>
               <FilterIcon />
             </Button>
           </DialogTrigger>
@@ -186,9 +188,9 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             {filterInputs}
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" aria-label='Cancel'>Cancel</Button>
               </DialogClose>
-              <Button type='submit' onClick={handleApplyFilters}>Apply filters</Button>
+              <Button type='submit' onClick={handleApplyFilters} aria-label='Apply filters'>Apply filters</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
