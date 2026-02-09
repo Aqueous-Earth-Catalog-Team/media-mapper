@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl, { GeoJSONSource, LngLatBoundsLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { MediaLocation } from "@/lib/airtable/types";
+import { MapFilters, MediaLocation } from "@/lib/airtable/types";
 import { CameraIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { addQueryParameter } from '@/lib/utils';
+import { addQueryParameter, hasActiveFilters } from '@/lib/utils';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
@@ -26,9 +26,11 @@ const DEFAULT_ZOOM = 5;
 export function Map({
   data,
   bounds,
+  filters,
 }: {
   data: MediaLocation[];
-  bounds: LngLatBoundsLike;
+  bounds: LngLatBoundsLike | undefined;
+  filters: MapFilters;
 }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -51,7 +53,7 @@ export function Map({
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/standard",
-      bounds: bounds || DEFAULT_BOUNDS,
+      bounds: bounds || DEFAULT_BOUNDS, // bounds has to be larger than 1 item
       zoom: DEFAULT_ZOOM,
       preserveDrawingBuffer: true, // has to be set to true for screenshot to work
     });
@@ -275,7 +277,7 @@ export function Map({
   /** Randomly Select a Media Point */
   /** =============================================== */
   useEffect(() => {
-    if (selectedMediaPoint || !isMapLoaded || data.length === 0) {
+    if (selectedMediaPoint || !isMapLoaded || data.length === 0 || hasActiveFilters(filters)) {
       return;
     }
 

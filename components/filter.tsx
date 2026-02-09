@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
-import { MediaLocation } from '@/lib/airtable/types';
+import { MapFilters, MediaLocation } from '@/lib/airtable/types';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Check, ChevronsUpDown, FilterIcon } from 'lucide-react';
+import { Check, ChevronsUpDown, CircleX, FilterIcon } from 'lucide-react';
 import { Label } from './ui/label';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useIsTablet } from './hooks/use-tablet';
 
-export default function Filter({ data, filters }: { data: MediaLocation[], filters: any }) {
+export default function Filter({ data, filters }: { data: MediaLocation[], filters: MapFilters }) {
   const isMobile = useIsTablet();
 
   const [selectedCountry, setSelectedCountry] = useState<string[]>(filters.countries);
@@ -22,8 +22,8 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
   const [startYear, setStartYear] = useState(filters.startYear || '');
   const [endYear, setEndYear] = useState(filters.endYear || '');
 
-  const [countries] = useState([...new Set(data.map(media => media.country))].filter(country => country !== undefined).map(country => ({ value: country?.toLowerCase(), label: country?.toUpperCase() })))
-  const [bodiesOfWater] = useState([...new Set(data.map(media => media.natural_feature_name))].filter(country => country !== undefined).map(country => ({ value: country?.toLowerCase(), label: country?.toUpperCase() })))
+  const [countries] = useState([...new Set(data.map(media => media.country))].filter(country => country !== undefined).sort().map(country => ({ value: country?.toLowerCase(), label: country })))
+  const [bodiesOfWater] = useState([...new Set(data.map(media => media.natural_feature_name))].filter(bodyOfWater => bodyOfWater !== undefined).sort().map(bodyOfWater => ({ value: bodyOfWater?.toLowerCase(), label: bodyOfWater })))
   const [minYear] = useState(Math.min(...data.map(d => d.media?.release_year).filter(year => year !== undefined)));
   const [maxYear] = useState(Math.max(...data.map(d => d.media?.release_year).filter(year => year !== undefined)));
 
@@ -57,7 +57,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
 
   const filterInputs = (
     <div className='flex flex-col md:flex-row gap-3 flex-wrap'>
-      <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+      <Popover open={countryOpen} onOpenChange={setCountryOpen} modal={true}>
         <PopoverTrigger asChild>
           <div className='flex flex-col gap-1 min-w-32'>
             <Label>Countries</Label>
@@ -67,11 +67,22 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             </Button>
           </div>
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent className='max-h-[300px]'>
           <Command>
             <CommandInput placeholder='Search Countries...' />
-            <CommandList>
+            <CommandList className='max-h-[200px] overflow-y-auto'>
               <CommandEmpty>No Country Found.</CommandEmpty>
+
+              {selectedCountry.length > 0 &&
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => setSelectedCountry([])}
+                    className='justify-center text-muted-foreground'>
+                    Clear Selection
+                  </CommandItem>
+                </CommandGroup>
+              }
+
               <CommandGroup>
                 {countries.map((country) => (
                   <CommandItem
@@ -88,7 +99,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         </PopoverContent>
       </Popover>
 
-      <Popover open={waterOpen} onOpenChange={setWaterOpen}>
+      <Popover open={waterOpen} onOpenChange={setWaterOpen} modal>
         <PopoverTrigger asChild>
           <div className='flex flex-col gap-1 min-w-32'>
             <Label>Bodies of Water</Label>
@@ -98,11 +109,21 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             </Button>
           </div>
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent className='max-h-[300px]' onOpenAutoFocus={(e) => e.preventDefault()}>
           <Command>
             <CommandInput placeholder='Search Bodies of Water...' />
-            <CommandList>
+            <CommandList className='max-h-[200px] overflow-y-auto'>
               <CommandEmpty>No Bodies of Water Found.</CommandEmpty>
+
+              {selectedWater.length > 0 &&
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => setSelectedWater([])}
+                    className='justify-center text-muted-foreground'>
+                    Clear Selection
+                  </CommandItem>
+                </CommandGroup>
+              }
               <CommandGroup>
                 {bodiesOfWater.map((water) => (
                   <CommandItem
@@ -157,7 +178,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
               <FilterIcon />
             </Button>
           </DialogTrigger>
-          <DialogContent onInteractOutside={e => e.preventDefault()}>
+          <DialogContent onInteractOutside={e => e.preventDefault()} id='mobile-dialog-container'>
             <DialogHeader>
               <DialogTitle>Map Filter</DialogTitle>
               <DialogDescription>Filter media points shown on map. Click apply filters when you are done.</DialogDescription>

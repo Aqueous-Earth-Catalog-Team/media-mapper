@@ -13,16 +13,18 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<Command className='basis-xs'>
-			<Popover open={open} onOpenChange={setOpen}>
+		<Popover open={open} onOpenChange={setOpen}>
+			<Command className='w-full lg:w-[350px] p-0'>
 				<PopoverTrigger asChild>
-					<CommandInput
-						className='max-w-[500px] justify-end'
-						placeholder="Search Media Locations"
-						value={searchValue}
-						onValueChange={setSearchValue} />
+					<div className='max-w-[350px] justify-end p-0'>
+						<CommandInput
+							className='p-0'
+							placeholder="Search Media Locations"
+							value={searchValue}
+							onValueChange={setSearchValue} />
+					</div>
 				</PopoverTrigger>
-				<PopoverContent onOpenAutoFocus={(e) => e.preventDefault()}>
+				<PopoverContent onOpenAutoFocus={(e) => e.preventDefault()} align='start' sideOffset={5} className='p-0 max-w-[350px]' style={{ width: 'var(--radix-popover-anchor-width)' }}>
 					<CommandList>
 						<CommandEmpty>No results found.</CommandEmpty>
 						<CommandGroup heading="Media">
@@ -49,7 +51,7 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 						</CommandGroup>
 					</CommandList>
 				</PopoverContent>
-			</Popover>
-		</Command>
+			</Command>
+		</Popover>
 	);
 }
