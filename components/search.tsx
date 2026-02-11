@@ -12,11 +12,11 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
-			<Command className='w-full lg:w-[350px] p-0'>
+			<Command className='w-full lg:w-[350px] p-0 border border-input'>
 				<PopoverTrigger asChild>
 					<div className='max-w-[350px] justify-end p-0'>
 						<CommandInput
-							className='p-0'
+							className='p-0 text-base'
 							placeholder="Search Media Locations"
 							aria-label='Search media locations'
 							value={searchValue}

@@ -61,7 +61,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         <PopoverTrigger asChild>
           <div className='flex flex-col gap-1 min-w-32'>
             <Label>Countries</Label>
-            <Button role="combobox" variant="outline" aria-expanded={countryOpen}>
+            <Button role="combobox" variant="outline" aria-expanded={countryOpen} className='w-full md:w-36'>
               {selectedCountry.length > 0 ? `${selectedCountry.length} Selected` : 'None Selected'}
               <ChevronsUpDown />
             </Button>
@@ -69,7 +69,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         </PopoverTrigger>
         <PopoverContent className='max-h-[300px]'>
           <Command>
-            <CommandInput placeholder='Search Countries...' aria-label='Filter by country' />
+            <CommandInput placeholder='Search Countries...' aria-label='Filter by country' className='text-base' />
             <CommandList className='max-h-[200px] overflow-y-auto'>
               <CommandEmpty>No Country Found.</CommandEmpty>
 
@@ -103,7 +103,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         <PopoverTrigger asChild>
           <div className='flex flex-col gap-1 min-w-32'>
             <Label>Bodies of Water</Label>
-            <Button role="combobox" variant="outline" aria-expanded={waterOpen}>
+            <Button role="combobox" variant="outline" aria-expanded={waterOpen} className='w-full md:w-36'>
               {selectedWater.length > 0 ? `${selectedWater.length} Selected` : 'None Selected'}
               <ChevronsUpDown />
             </Button>
@@ -111,7 +111,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
         </PopoverTrigger>
         <PopoverContent className='max-h-[300px]' onOpenAutoFocus={(e) => e.preventDefault()}>
           <Command>
-            <CommandInput placeholder='Search Bodies of Water...' aria-label='Filter by body of water' />
+            <CommandInput placeholder='Search Bodies of Water...' aria-label='Filter by body of water' className='text-base' />
             <CommandList className='max-h-[200px] overflow-y-auto'>
               <CommandEmpty>No Bodies of Water Found.</CommandEmpty>
 
@@ -151,7 +151,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             aria-label='From year'
             type='number'
             placeholder='Start Year'
-            className='min-w-28' />
+            className='min-w-28 text-base' />
           -
           <Input
             value={endYear}
@@ -161,7 +161,7 @@ export default function Filter({ data, filters }: { data: MediaLocation[], filte
             type='number'
             aria-label='Filter by latest release year'
             placeholder='To year'
-            className='min-w-28' />
+            className='min-w-28 text-base' />
         </div>
       </div>
     </div>
