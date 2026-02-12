@@ -37,7 +37,7 @@ export default function Search({ data }: { data: MediaLocation[] }) {
 									key={media.id}
 									value={`${media.name} ${media?.city} ${media?.country} ${media.media?.release_year} ${media.region} ${media.location_name}`}
 									onSelect={() => {
-										const params = addQueryParameter(window.location.search, "mediaPointId", media.id);
+										const params = addQueryParameter("mediaPointId", media.id);
 										window.history.pushState({}, "", params);
 										setOpen(false);
 									}}>

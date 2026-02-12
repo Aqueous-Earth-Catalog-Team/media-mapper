@@ -204,7 +204,7 @@ export function Map({
       const props = feature.properties;
 
       if (props && props.id) {
-        const params = addQueryParameter(window.location.search, "mediaPointId", props.id);
+        const params = addQueryParameter("mediaPointId", props.id);
         window.history.pushState({}, "", params);
       }
     });
@@ -282,9 +282,10 @@ export function Map({
     }
 
     const randomIndex = Math.floor(Math.random() * data.length);
-    window.history.pushState({}, "", `?mediaPointId=${data[randomIndex].id}`);
+    window.history.pushState({}, "", addQueryParameter("mediaPointId", data[randomIndex].id));
     // Omitting selectedMediaPoint since it would retrigger a selection when the media panel is closed.
     // Omitting data since data changes anytime the url changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMapLoaded]);
 
   return (

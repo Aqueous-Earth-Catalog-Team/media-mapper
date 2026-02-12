@@ -1,15 +1,54 @@
+import { MapFilters } from '@/lib/airtable/types';
 import { getMediaPoints } from "./data";
-import MapContainer from '@/components/map-container';
+import { LngLatBoundsLike } from 'mapbox-gl';
+import Search from '@/components/search';
+import Filters from '@/components/filters';
+import { Map } from "@/components/map";
+import { LocationDetails } from '@/components/location-details';
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const mediaPoints = await getMediaPoints();
+  const params = await searchParams;
+
+  const filters: MapFilters = {
+    countries: params?.country?.split(',').filter(Boolean) || [],
+    bodiesOfWater: params?.body_of_water?.split(',').filter(Boolean) || [],
+    startYear: params?.start_year || '',
+    endYear: params?.end_year || '',
+  }
+
+  const filteredMediaPoints = mediaPoints.filter(media => {
+    if (filters.countries.length > 0 && !filters.countries.includes(media?.country?.toLowerCase() || '')) return false;
+    if (filters.bodiesOfWater.length > 0 && !filters.bodiesOfWater.includes(media.natural_feature_name?.toLowerCase() || '')) return false;
+    if (filters.startYear && media.media?.release_year && media.media?.release_year < +filters.startYear) return false;
+    if (filters.endYear && media.media?.release_year && media.media?.release_year > +filters.endYear) return false;
+
+    return true;
+  });
+
+  const countryOptions = [...new Set(mediaPoints.map(media => media.country))].filter(country => country !== undefined).sort().map(country => ({ value: country?.toLowerCase(), label: country }))
+  const bodiesOfWaterOptions = [...new Set(mediaPoints.map(media => media.natural_feature_name))].filter(bodyOfWater => bodyOfWater !== undefined).sort().map(bodyOfWater => ({ value: bodyOfWater?.toLowerCase(), label: bodyOfWater }))
+  const minYear = Math.min(...mediaPoints.map(d => d.media?.release_year).filter(year => year !== undefined));
+  const maxYear = Math.max(...mediaPoints.map(d => d.media?.release_year).filter(year => year !== undefined));
+
+  // If there is only 1 media point, it doesn't satisfy LngLatBounds for mapbox
+  const mapBounds = filteredMediaPoints.length > 1 ? filteredMediaPoints
+    .filter((f) => f.longitude && f.latitude)
+    .map((f) => [f.longitude, f.latitude]) as LngLatBoundsLike : undefined;
 
   return (
     <div className="w-full h-full relative">
       <h1 className="sr-only">Media Mapper - Interactive Map View</h1>
-      <MapContainer mediaPoints={mediaPoints} />
+      <div className="px-4 py-2 w-full max-w-7xl mx-auto relative h-[calc(100vh-16rem)]">
+        <div className='flex p-2 gap-1 items-end lg:justify-between'>
+          <Search data={filteredMediaPoints} />
+          <Filters filters={filters} countryOptions={countryOptions} bodiesOfWaterOptions={bodiesOfWaterOptions} minYear={minYear} maxYear={maxYear} />
+        </div>
+        <Map data={filteredMediaPoints} bounds={mapBounds} filters={filters} />
+        <LocationDetails data={mediaPoints} />
+      </div>
     </div>
   );
 }
