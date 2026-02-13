@@ -1,20 +1,19 @@
 "use client"
 
 import { useState } from 'react';
-import { MapFilters } from '@/lib/airtable/types';
+import { MapFilters, MultiSelectOption } from '@/lib/airtable/types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { FilterIcon } from 'lucide-react';
 import { Label } from './ui/label';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { useIsTablet } from './hooks/use-tablet';
-import { redirect } from 'next/navigation';
 import MultiSelect from './ui/multi-select';
 
 interface FilterProps {
   filters: MapFilters,
-  countryOptions: { value: string, label: string }[],
-  bodiesOfWaterOptions: { value: string, label: string }[],
+  countryOptions: MultiSelectOption[],
+  bodiesOfWaterOptions: MultiSelectOption[],
   minYear: number,
   maxYear: number,
 }
@@ -45,21 +44,21 @@ export default function Filters({ filters, minYear, maxYear, countryOptions, bod
     }
 
     setOpenFilters(false);
-    redirect(`/?${newParams.toString()}`);
+    history.pushState({}, "", `/?${newParams.toString()}`);
   }
 
   const filterInputs = (
     <div className='flex flex-col md:flex-row gap-3 flex-wrap'>
       <MultiSelect
-        options={countryOptions}
+        values={countryOptions}
         label="Countries"
-        setSelectedOptions={setSelectedCountry}
+        onSelect={setSelectedCountry}
         selectedOptions={selectedCountry} />
 
       <MultiSelect
-        options={bodiesOfWaterOptions}
+        values={bodiesOfWaterOptions}
         label="Bodies of Water"
-        setSelectedOptions={setSelectedWater}
+        onSelect={setSelectedWater}
         selectedOptions={selectedWater} />
 
       <div className='flex flex-col gap-1 no-wrap'>
