@@ -13,6 +13,13 @@ interface MapContainerProps {
 	mediaPoints: MediaLocation[],
 }
 
+/*
+Map Container component Reason:
+Filtering is handled client-side to provide instant feedback to the user,
+avoid unnecessary server requests and page redirects, and keep the map UI
+responsive while users refine search and filter criteria.
+*/
+
 export default function MapContainer({ mediaPoints }: MapContainerProps) {
 	const searchParams = useSearchParams();
 
@@ -32,7 +39,7 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
 
 			return true;
 		})
-	}, [filters]);
+	}, [filters, mediaPoints]);
 
 	// If there is only 1 media point, it doesn't satisfy LngLatBounds for mapbox
 	const mapBounds = filteredMediaPoints.length > 1 ? filteredMediaPoints
