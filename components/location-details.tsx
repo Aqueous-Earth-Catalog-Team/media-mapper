@@ -84,7 +84,7 @@ export function LocationDetails({ data }: LocationDetailsProps) {
 
   if (!selectedMediaPoint) return null;
 
-  const relatedMedia = data.filter(d => selectedMediaPoint?.media?.related_media?.includes(d.id) && d.id !== selectedMediaPoint.id);
+  const relatedMedia = data.filter(d => selectedMediaPoint?.media?.related_media_locations?.includes(d.id) && d.id !== selectedMediaPoint.id);
 
   return (
     <Card
@@ -179,17 +179,17 @@ export function LocationDetails({ data }: LocationDetailsProps) {
         {relatedMedia.length > 0 &&
           <>
             <Label className='text-xs text-muted-foreground mt-3'>Associated Media</Label>
-            <div className='flex flex-col gap-2'>
+            <ul className='flex flex-col gap-2'>
               {relatedMedia.map((item, index) => (
-                <div key={`associated-media-${index}`}>
+                <li key={`associated-media-${index}`}>
                   <Link
                     className="text-sm flex items-center gap-1 text-primary underline underline-offset-2 hover:text-primary/80 transition-colors w-fit"
                     href={`/?mediaPointId=${item.id}`}>
                     {item.name}
                   </Link>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </>
         }
 
