@@ -178,7 +178,7 @@ export function LocationDetails({ data }: LocationDetailsProps) {
 
         {relatedMedia.length > 0 &&
           <>
-            <Label className='text-xs text-muted-foreground mt-3'>Associated Media</Label>
+            <Label className='text-xs text-muted-foreground mt-3'>Associated Media Locations</Label>
             <ul className='ml-5 list-disc'>
               {relatedMedia.map((item, index) => (
                 <li key={`associated-media-${index}`}>
