@@ -23,13 +23,16 @@ responsive while users refine search and filter criteria.
 export default function MapContainer({ mediaPoints }: MapContainerProps) {
   const searchParams = useSearchParams();
 
-  const filters: MapFilters = {
-    countries: searchParams.get("country")?.split(",").filter(Boolean) || [],
-    bodiesOfWater:
-      searchParams.get("body_of_water")?.split(",").filter(Boolean) || [],
-    startYear: searchParams.get("start_year") || "",
-    endYear: searchParams.get("end_year") || "",
-  };
+  const filters: MapFilters = useMemo(
+    () => ({
+      countries: searchParams.get("country")?.split(",").filter(Boolean) || [],
+      bodiesOfWater:
+        searchParams.get("body_of_water")?.split(",").filter(Boolean) || [],
+      startYear: searchParams.get("start_year") || "",
+      endYear: searchParams.get("end_year") || "",
+    }),
+    [searchParams]
+  );
 
   const filteredMediaPoints = useMemo(() => {
     return mediaPoints.filter((media) => {

@@ -58,6 +58,10 @@ export function LocationDetails({ data }: LocationDetailsProps) {
   const mediaPointId = searchParams.get("mediaPointId");
   const cardRef = useRef<HTMLDivElement>(null);
 
+  function handleClose() {
+    window.history.pushState({}, "", removeQueryParameter("mediaPointId"));
+  }
+
   // Focus management and keyboard support
   useEffect(() => {
     if (mediaPointId && cardRef.current) {
@@ -79,10 +83,6 @@ export function LocationDetails({ data }: LocationDetailsProps) {
   const selectedMediaPoint = mediaPointId
     ? data.find((point) => point.id === mediaPointId)
     : null;
-
-  function handleClose() {
-    window.history.pushState({}, "", removeQueryParameter("mediaPointId"));
-  }
 
   if (!selectedMediaPoint) return null;
 
