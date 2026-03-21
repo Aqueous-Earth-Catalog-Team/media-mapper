@@ -115,7 +115,7 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
         <div
           className="absolute top-3 z-20 -translate-x-1/2"
           style={{
-            left: isMobile || !drawerOpen ? "50%" : "calc((100% + 24rem) / 2)",
+            left: !isMobile && drawerOpen ? "calc((100% + 24rem) / 2)" : "50%",
           }}
         >
           <Filters

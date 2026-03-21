@@ -27,12 +27,10 @@ export function Map({
   data,
   bounds,
   filters,
-  children,
 }: {
   data: MediaLocation[];
   bounds: LngLatBoundsLike | undefined;
   filters: MapFilters;
-  children?: React.ReactNode;
 }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -334,7 +332,6 @@ export function Map({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      {children}
     </div>
   );
 }

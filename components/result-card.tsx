@@ -1,5 +1,3 @@
-"use client";
-
 import { MediaLocation } from "@/lib/airtable/types";
 import { Badge } from "./ui/badge";
 import { addQueryParameter } from "@/lib/utils";

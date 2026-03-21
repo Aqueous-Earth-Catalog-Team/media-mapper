@@ -57,12 +57,12 @@ export default function MultiSelect({
       <PopoverContent className="max-h-[300px] p-0">
         <Command className="p-0">
           <CommandInput
-            placeholder="Search Countries..."
-            aria-label="Filter by country"
+            placeholder={`Search ${label}...`}
+            aria-label={`Filter by ${label.toLowerCase()}`}
             className="text-base p-0"
           />
           <CommandList className="max-h-[200px] overflow-y-auto">
-            <CommandEmpty>No Country Found.</CommandEmpty>
+            <CommandEmpty>No results found.</CommandEmpty>
 
             {selectedOptions.length > 0 && (
               <CommandGroup>

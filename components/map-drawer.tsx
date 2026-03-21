@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
@@ -11,14 +11,12 @@ import {
   X,
 } from "lucide-react";
 import { MediaLocation } from "@/lib/airtable/types";
-import { removeQueryParameter } from "@/lib/utils";
+import { FILTER_PARAMS, removeQueryParameter } from "@/lib/utils";
 import { Button } from "./ui/button";
 import Search from "./search";
 import { ResultCard } from "./result-card";
 import { LocationDetails } from "./location-details";
 import { useIsTablet } from "./hooks/use-tablet";
-
-const FILTER_PARAMS = ["country", "body_of_water", "start_year", "end_year"];
 
 interface MapDrawerProps {
   filteredMediaPoints: MediaLocation[];
@@ -37,6 +35,7 @@ export function MapDrawer({
   const searchParams = useSearchParams();
   const mediaPointId = searchParams.get("mediaPointId");
   const isMobile = useIsTablet();
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   const hasActiveFilters = FILTER_PARAMS.some((p) => searchParams.has(p));
 
@@ -75,6 +74,31 @@ export function MapDrawer({
   function handleBack() {
     window.history.pushState({}, "", removeQueryParameter("mediaPointId"));
   }
+
+  // Keyboard support: Escape key closes detail view or drawer
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        if (selectedMediaPoint) {
+          handleBack();
+        } else {
+          onToggle();
+        }
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, selectedMediaPoint, onToggle]);
+
+  // Focus drawer when it opens
+  useEffect(() => {
+    if (isOpen && drawerRef.current) {
+      drawerRef.current.focus();
+    }
+  }, [isOpen, selectedMediaPoint]);
 
   // Closed state: show toggle button
   if (!isOpen) {
@@ -199,7 +223,13 @@ export function MapDrawer({
   // Mobile: bottom sheet
   if (isMobile) {
     return (
-      <div className="absolute bottom-0 left-0 right-0 z-10 h-[60%] bg-background flex flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-2xl">
+      <div
+        ref={drawerRef}
+        tabIndex={-1}
+        role="region"
+        aria-label={selectedMediaPoint ? "Location details" : "Search results"}
+        className="absolute bottom-0 left-0 right-0 z-10 h-[60%] bg-background flex flex-col shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] rounded-t-2xl focus:outline-none"
+      >
         {drawerContent}
       </div>
     );
@@ -207,7 +237,13 @@ export function MapDrawer({
 
   // Desktop: left panel
   return (
-    <div className="absolute top-0 left-0 bottom-0 z-10 w-80 lg:w-96 bg-background flex flex-col shadow-lg">
+    <div
+      ref={drawerRef}
+      tabIndex={-1}
+      role="region"
+      aria-label={selectedMediaPoint ? "Location details" : "Search results"}
+      className="absolute top-0 left-0 bottom-0 z-10 w-80 lg:w-96 bg-background flex flex-col shadow-lg focus:outline-none"
+    >
       {drawerContent}
     </div>
   );

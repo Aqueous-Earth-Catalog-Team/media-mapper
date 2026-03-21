@@ -27,12 +27,12 @@ interface FilterProps {
 }
 
 function filtersResetKey(f: MapFilters): string {
-  return JSON.stringify({
-    countries: [...f.countries].sort(),
-    bodiesOfWater: [...f.bodiesOfWater].sort(),
-    startYear: f.startYear,
-    endYear: f.endYear,
-  });
+  return [
+    [...f.countries].sort().join(","),
+    [...f.bodiesOfWater].sort().join(","),
+    f.startYear,
+    f.endYear,
+  ].join("|");
 }
 
 function FiltersForm({
