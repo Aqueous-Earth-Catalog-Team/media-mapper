@@ -9,8 +9,8 @@ export default function Loading() {
           {/* Map skeleton */}
           <Skeleton className="w-full h-full" />
 
-          {/* Drawer skeleton */}
-          <div className="absolute top-0 left-0 bottom-0 w-80 lg:w-96 bg-background shadow-lg flex flex-col gap-3 p-3">
+          {/* Drawer skeleton - left panel on desktop, bottom sheet on mobile */}
+          <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-background shadow-lg flex flex-col gap-3 p-3 rounded-t-2xl lg:top-0 lg:right-auto lg:bottom-0 lg:h-auto lg:w-96 lg:rounded-none">
             <Skeleton className="h-9 w-full" />
             <Skeleton className="flex-1 w-full" />
           </div>
