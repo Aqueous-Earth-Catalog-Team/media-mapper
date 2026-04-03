@@ -33,6 +33,7 @@ export interface Media {
   references?: string;
   rights?: string;
   rights_statement_link?: string;
+  related_media_locations?: string[];
 }
 
 export interface MediaLocation {
@@ -41,9 +42,22 @@ export interface MediaLocation {
   longitude: number;
   latitude: number;
   location_name?: string;
+  location_description?: string;
   natural_feature_name?: string;
   city?: string;
   region?: string;
   country?: string;
   media?: Media;
+}
+
+export interface MapFilters { 
+  countries: string[];
+  bodiesOfWater: string[];
+  startYear: string;
+  endYear: string;
+}
+
+export interface MultiSelectOption {
+  value: string;
+  label: string;
 }

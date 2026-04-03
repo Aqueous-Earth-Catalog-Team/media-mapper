@@ -1,9 +1,10 @@
 "use client";
+
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl, { GeoJSONSource, LngLatBoundsLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { MediaLocation } from "@/lib/airtable/types";
+import { MapFilters, MediaLocation } from "@/lib/airtable/types";
 import { CameraIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { addQueryParameter, hasActiveFilters } from "@/lib/utils";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
@@ -24,14 +26,15 @@ const DEFAULT_ZOOM = 5;
 export function Map({
   data,
   bounds,
+  filters,
 }: {
   data: MediaLocation[];
-  bounds: LngLatBoundsLike;
+  bounds: LngLatBoundsLike | undefined;
+  filters: MapFilters;
 }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-
   // Grab the idea of the selected media point from the URL
   const searchParams = useSearchParams();
   const mediaPointId = searchParams.get("mediaPointId");
@@ -50,7 +53,10 @@ export function Map({
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/standard",
-      bounds: bounds || DEFAULT_BOUNDS,
+      bounds: bounds || DEFAULT_BOUNDS, // bounds has to be larger than 1 item
+      fitBoundsOptions: {
+        padding: 100,
+      },
       zoom: DEFAULT_ZOOM,
       preserveDrawingBuffer: true, // has to be set to true for screenshot to work
     });
@@ -201,7 +207,8 @@ export function Map({
       const props = feature.properties;
 
       if (props && props.id) {
-        window.history.pushState({}, "", `?mediaPointId=${props.id}`);
+        const params = addQueryParameter("mediaPointId", props.id);
+        window.history.pushState({}, "", params);
       }
     });
 
@@ -273,20 +280,31 @@ export function Map({
   /** Randomly Select a Media Point */
   /** =============================================== */
   useEffect(() => {
-    if (selectedMediaPoint || !isMapLoaded || data.length === 0) {
+    if (
+      selectedMediaPoint ||
+      !isMapLoaded ||
+      data.length === 0 ||
+      hasActiveFilters(filters)
+    ) {
       return;
     }
 
     const randomIndex = Math.floor(Math.random() * data.length);
-    window.history.pushState({}, "", `?mediaPointId=${data[randomIndex].id}`);
+    window.history.pushState(
+      {},
+      "",
+      addQueryParameter("mediaPointId", data[randomIndex].id)
+    );
     // Omitting selectedMediaPoint since it would retrigger a selection when the media panel is closed.
-  }, [isMapLoaded, data]);
+    // Omitting data since data changes anytime the url changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMapLoaded]);
 
   return (
     <div className="w-full h-full relative">
       <div
         ref={mapContainer}
-        className="w-full h-full rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        className="w-full h-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       />
       <TooltipProvider>
         <Tooltip>
