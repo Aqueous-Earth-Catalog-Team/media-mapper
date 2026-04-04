@@ -99,11 +99,20 @@ export function setupKeyboardNav(
 /**
  * Add or update the media-points GeoJSON source and circle layer.
  *
- * If the source already exists, its data is replaced in-place.
+ * If the source already exists, its data is replaced in-place via setData().
+ * The optional `selected` parameter sets a `selected` property on the
+ * matching feature so that paint expressions can highlight it. Including
+ * selection in the same setData() call avoids an intermediate render frame
+ * where points flash with default (black) styling.
+ *
  * Click and hover interactions are registered on the layer so that
  * selecting a point updates the URL and the cursor changes on hover.
  */
-export function addDataLayer(mapInstance: mapboxgl.Map, data: MediaLocation[]) {
+export function addDataLayer(
+  mapInstance: mapboxgl.Map,
+  data: MediaLocation[],
+  selected?: MediaLocation | null
+) {
   const geojson = {
     type: "FeatureCollection",
     features: data.map((point) => ({
@@ -114,6 +123,7 @@ export function addDataLayer(mapInstance: mapboxgl.Map, data: MediaLocation[]) {
       },
       properties: {
         ...point,
+        selected: point.id === selected?.id,
       },
     })),
   };
@@ -169,37 +179,4 @@ export function addDataLayer(mapInstance: mapboxgl.Map, data: MediaLocation[]) {
       mapInstance.getCanvas().style.cursor = "";
     });
   }
-}
-
-/**
- * Highlight the selected media point on the map.
- *
- * Updates the GeoJSON `selected` property so that circle-sort-key
- * pushes the selected point above all others, and paint expressions
- * apply the highlight styling.
- */
-export function applySelectionStyling(
-  mapInstance: mapboxgl.Map,
-  data: MediaLocation[],
-  selected: MediaLocation | null | undefined
-) {
-  const source = mapInstance.getSource("media-points") as GeoJSONSource;
-  if (!source) return;
-
-  const geojson = {
-    type: "FeatureCollection" as const,
-    features: data.map((point) => ({
-      type: "Feature" as const,
-      geometry: {
-        type: "Point" as const,
-        coordinates: [point.longitude, point.latitude],
-      },
-      properties: {
-        ...point,
-        selected: point.id === selected?.id,
-      },
-    })),
-  };
-
-  source.setData(geojson);
 }

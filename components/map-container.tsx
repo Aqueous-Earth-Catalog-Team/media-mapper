@@ -2,6 +2,7 @@
 
 import { MapFilters, MediaLocation } from "@/lib/airtable/types";
 import { cn, computeMapBounds } from "@/lib/utils";
+import { matchesSearch } from "@/lib/search";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Map } from "@/components/map";
@@ -29,6 +30,7 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
   const [prevMediaPointId, setPrevMediaPointId] = useState(mediaPointId);
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [mapStyle, setMapStyle] = useState<MapStyle>("standard");
+  const [searchValue, setSearchValue] = useState("");
   const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
   const isTablet = useIsTablet();
 
@@ -100,6 +102,14 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
     });
   }, [filters, mediaPoints]);
 
+  const searchedMediaPoints = useMemo(() => {
+    return filteredMediaPoints.filter((media) =>
+      matchesSearch(media, searchValue)
+    );
+  }, [searchValue, filteredMediaPoints]);
+
+  // Bounds are computed from filter results only (not search),
+  // so the map doesn't refit on every keystroke.
   const mapBounds = useMemo(
     () => computeMapBounds(filteredMediaPoints),
     [filteredMediaPoints]
@@ -109,15 +119,17 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
     <div className="w-full relative h-[calc(100vh-4rem)]">
       <div className="relative w-full h-full overflow-hidden">
         <Map
-          data={filteredMediaPoints}
+          data={searchedMediaPoints}
           bounds={mapBounds}
           filters={filters}
           styleUrl={STYLES[mapStyle]}
           onMapReady={handleMapReady}
         />
         <MapDrawer
-          filteredMediaPoints={filteredMediaPoints}
+          searchedMediaPoints={searchedMediaPoints}
           allMediaPoints={mediaPoints}
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
           isOpen={drawerOpen}
           onToggle={handleDrawerToggle}
         />

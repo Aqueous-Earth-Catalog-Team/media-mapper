@@ -8,7 +8,6 @@ import { MapFilters, MediaLocation } from "@/lib/airtable/types";
 import { addQueryParameter, hasActiveFilters } from "@/lib/utils";
 import {
   addDataLayer,
-  applySelectionStyling,
   setupKeyboardNav,
   DEFAULT_BOUNDS,
   DEFAULT_ZOOM,
@@ -84,46 +83,25 @@ export function Map({ data, bounds, filters, styleUrl, onMapReady }: MapProps) {
     map.current.setStyle(styleUrl);
     map.current.once("style.load", () => {
       if (map.current) {
-        addDataLayer(map.current, data);
-        applySelectionStyling(map.current, data, selectedMediaPoint);
+        addDataLayer(map.current, data, selectedMediaPoint);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [styleUrl, isMapLoaded]);
 
-  // Sync the GeoJSON data layer whenever the dataset changes (e.g. filters
-  // applied). Removes the layer and source on cleanup to avoid duplicates.
+  // Sync the GeoJSON data layer with selection included in a single
+  // setData() call to avoid intermediate frames with missing styling.
   useEffect(() => {
     if (!map.current || !isMapLoaded) return;
 
-    addDataLayer(map.current, data);
-
-    // Cleanup
-    return () => {
-      if (map.current) {
-        if (map.current.getLayer("media-points-layer")) {
-          map.current.removeLayer("media-points-layer");
-        }
-        if (map.current.getSource("media-points")) {
-          map.current.removeSource("media-points");
-        }
-      }
-    };
-  }, [isMapLoaded, data]);
-
-  // Fly to the selected media point and highlight it. Resets styling
-  // back to default when no point is selected.
-  useEffect(() => {
-    if (!map.current || !isMapLoaded) return;
+    addDataLayer(map.current, data, selectedMediaPoint);
 
     if (selectedMediaPoint) {
       map.current.flyTo({
         center: [selectedMediaPoint.longitude, selectedMediaPoint.latitude],
       });
     }
-
-    applySelectionStyling(map.current, data, selectedMediaPoint);
-  }, [selectedMediaPoint, isMapLoaded, data]);
+  }, [isMapLoaded, data, selectedMediaPoint]);
 
   // Auto-select a random point on first load so the UI isn't empty.
   // Skipped if a point is already selected or filters are active.
