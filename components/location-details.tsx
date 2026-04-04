@@ -132,7 +132,7 @@ export function LocationDetails({
 
           {relatedMedia.length > 0 && (
             <>
-              <Label className="text-xs text-muted-foreground mt-3">
+              <Label className="text-xs font-semibold tracking-relaxed mt-3">
                 Associated Media Locations
               </Label>
               <ul className="ml-5 list-disc">

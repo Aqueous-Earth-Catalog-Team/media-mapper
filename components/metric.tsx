@@ -21,7 +21,7 @@ function Label({
   children: React.ReactNode;
 }) {
   return (
-    <span className={cn("text-xs text-muted-foreground", className)}>
+    <span className={cn("text-xs font-semibold tracking-relaxed", className)}>
       {children}
     </span>
   );

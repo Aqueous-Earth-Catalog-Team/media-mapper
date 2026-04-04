@@ -12,7 +12,7 @@ export function Markdown({
 }) {
   return (
     <div
-      className={cn("prose prose-sm max-w-none dark:prose-invert", className)}
+      className={cn("prose prose-sm max-w-none dark:prose-invert prose-p:leading-snug", className)}
     >
       <ReactMarkdown>{children}</ReactMarkdown>
     </div>
