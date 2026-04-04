@@ -1,13 +1,16 @@
 "use client";
 
 import { MapFilters, MediaLocation } from "@/lib/airtable/types";
-import { computeMapBounds } from "@/lib/utils";
+import { cn, computeMapBounds } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Map } from "@/components/map";
+import { STYLES, MapStyle, takeScreenshot } from "@/lib/map-utils";
 import { MapDrawer } from "./map-drawer";
-import { Filters } from "./filters";
+import { MapToolbar } from "./map-toolbar";
+import { BasemapToggle } from "./basemap-toggle";
 import { useIsTablet } from "./hooks/use-tablet";
+import { TooltipProvider } from "./ui/tooltip";
 
 interface MapContainerProps {
   mediaPoints: MediaLocation[];
@@ -25,8 +28,29 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
   const mediaPointId = searchParams.get("mediaPointId");
   const [prevMediaPointId, setPrevMediaPointId] = useState(mediaPointId);
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const isMobile = useIsTablet();
+  const [mapStyle, setMapStyle] = useState<MapStyle>("standard");
+  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
+  const isTablet = useIsTablet();
 
+  const handleMapReady = useCallback((mapInstance: mapboxgl.Map) => {
+    mapInstanceRef.current = mapInstance;
+  }, []);
+
+  const handleScreenshot = useCallback(() => {
+    if (mapInstanceRef.current) takeScreenshot(mapInstanceRef.current);
+  }, []);
+
+  const handleDrawerToggle = useCallback(() => {
+    setDrawerOpen((prev) => !prev);
+  }, []);
+
+  const handleBasemapToggle = useCallback(() => {
+    setMapStyle((prev) => (prev === "standard" ? "satellite" : "standard"));
+  }, []);
+
+  // This block checks if the selected mediaPointId from the URL search parameters has changed.
+  // If it detects a change, it updates the state storing the previous mediaPointId.
+  // Additionally, if a new mediaPointId is present, it ensures the map drawer is open,
   if (mediaPointId !== prevMediaPointId) {
     setPrevMediaPointId(mediaPointId);
     if (mediaPointId) {
@@ -78,54 +102,37 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
 
   const mapBounds = computeMapBounds(filteredMediaPoints);
 
-  const countryOptions = [...new Set(mediaPoints.map((media) => media.country))]
-    .filter((country) => country !== undefined)
-    .sort()
-    .map((country) => ({ value: country?.toLowerCase(), label: country }));
-  const bodiesOfWaterOptions = [
-    ...new Set(mediaPoints.map((media) => media.natural_feature_name)),
-  ]
-    .filter((bodyOfWater) => bodyOfWater !== undefined)
-    .sort()
-    .map((bodyOfWater) => ({
-      value: bodyOfWater?.toLowerCase(),
-      label: bodyOfWater,
-    }));
-  const minYear = Math.min(
-    ...mediaPoints
-      .map((d) => d.media?.release_year)
-      .filter((year) => year !== undefined)
-  );
-  const maxYear = Math.max(
-    ...mediaPoints
-      .map((d) => d.media?.release_year)
-      .filter((year) => year !== undefined)
-  );
-
   return (
     <div className="w-full relative h-[calc(100vh-4rem)]">
       <div className="relative w-full h-full overflow-hidden">
-        <Map data={filteredMediaPoints} bounds={mapBounds} filters={filters} />
+        <Map
+          data={filteredMediaPoints}
+          bounds={mapBounds}
+          filters={filters}
+          styleUrl={STYLES[mapStyle]}
+          onMapReady={handleMapReady}
+        />
         <MapDrawer
           filteredMediaPoints={filteredMediaPoints}
           allMediaPoints={mediaPoints}
           isOpen={drawerOpen}
-          onToggle={() => setDrawerOpen((prev) => !prev)}
+          onToggle={handleDrawerToggle}
         />
-        <div
-          className="absolute top-3 z-20 -translate-x-1/2"
-          style={{
-            left: !isMobile && drawerOpen ? "calc((100% + 24rem) / 2)" : "50%",
-          }}
-        >
-          <Filters
-            filters={filters}
-            countryOptions={countryOptions}
-            bodiesOfWaterOptions={bodiesOfWaterOptions}
-            minYear={minYear}
-            maxYear={maxYear}
-          />
-        </div>
+        <TooltipProvider>
+          <div
+            className={cn(
+              "absolute top-3 z-20 max-sm:left-3 sm:left-1/2 sm:-translate-x-1/2",
+              !isTablet && drawerOpen && "pl-96"
+            )}
+          >
+            <MapToolbar
+              filters={filters}
+              mediaPoints={mediaPoints}
+              onScreenshot={handleScreenshot}
+            />
+          </div>
+          <BasemapToggle mapStyle={mapStyle} onToggle={handleBasemapToggle} />
+        </TooltipProvider>
       </div>
     </div>
   );
