@@ -100,7 +100,10 @@ export default function MapContainer({ mediaPoints }: MapContainerProps) {
     });
   }, [filters, mediaPoints]);
 
-  const mapBounds = computeMapBounds(filteredMediaPoints);
+  const mapBounds = useMemo(
+    () => computeMapBounds(filteredMediaPoints),
+    [filteredMediaPoints]
+  );
 
   return (
     <div className="w-full relative h-[calc(100vh-4rem)]">

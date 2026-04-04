@@ -148,27 +148,27 @@ export function addDataLayer(mapInstance: mapboxgl.Map, data: MediaLocation[]) {
         "circle-stroke-color": "#ffffff",
       },
     });
+
+    mapInstance.on("click", "media-points-layer", (e) => {
+      if (!e.features || e.features.length === 0) return;
+
+      const feature = e.features[0];
+      const props = feature.properties;
+
+      if (props && props.id) {
+        const params = addQueryParameter("mediaPointId", props.id);
+        window.history.pushState({}, "", params);
+      }
+    });
+
+    mapInstance.on("mouseenter", "media-points-layer", () => {
+      mapInstance.getCanvas().style.cursor = "pointer";
+    });
+
+    mapInstance.on("mouseleave", "media-points-layer", () => {
+      mapInstance.getCanvas().style.cursor = "";
+    });
   }
-
-  mapInstance.on("click", "media-points-layer", (e) => {
-    if (!e.features || e.features.length === 0) return;
-
-    const feature = e.features[0];
-    const props = feature.properties;
-
-    if (props && props.id) {
-      const params = addQueryParameter("mediaPointId", props.id);
-      window.history.pushState({}, "", params);
-    }
-  });
-
-  mapInstance.on("mouseenter", "media-points-layer", () => {
-    mapInstance.getCanvas().style.cursor = "pointer";
-  });
-
-  mapInstance.on("mouseleave", "media-points-layer", () => {
-    mapInstance.getCanvas().style.cursor = "";
-  });
 }
 
 /**
