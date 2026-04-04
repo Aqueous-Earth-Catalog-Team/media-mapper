@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { base, convertKeysToSnakeCase } from "@/lib/airtable";
 import { Media, WebAppMetadata } from "@/lib/airtable/types";
 
@@ -67,7 +68,7 @@ export async function getMediaPoints() {
     });
 }
 
-export async function getWebAppMetadata(): Promise<WebAppMetadata> {
+export const getWebAppMetadata = cache(async (): Promise<WebAppMetadata> => {
   const response = await base(WEB_APP_METADATA_TABLE_NAME)
     .select({
       view: process.env.AIRTABLE_VIEW_NAME,
@@ -92,7 +93,7 @@ export async function getWebAppMetadata(): Promise<WebAppMetadata> {
       });
     });
 
-  const metadata = response[0];
+  const metadata = response[0] ?? ({} as WebAppMetadata);
 
   return metadata;
-}
+});
